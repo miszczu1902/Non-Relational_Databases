@@ -15,8 +15,8 @@ public abstract class BasicModelTest {
     }
 
     protected static List<Double> randomDoubles() {
-        return Collections.singletonList(
-                (RandomUtils.nextDouble(1, 1000)));
+        Double randomValue = (double) Math.round(RandomUtils.nextDouble(1, 1000));
+        return Collections.singletonList(randomValue);
     }
 
     protected static List<UUID> randomUUIDs() {
