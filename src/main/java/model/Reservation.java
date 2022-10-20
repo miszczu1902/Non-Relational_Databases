@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.math3.util.Precision;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -54,7 +55,7 @@ public class Reservation implements Serializable {
     }
 
     public void calculateReservationCost() {
-        reservationCost = client.getClientType()
-                .applyDiscount(getRentDays() * room.getPrice());
+        reservationCost = Precision.round(client.getClientType()
+                .applyDiscount(getRentDays() * room.getPrice()), 2);
     }
 }

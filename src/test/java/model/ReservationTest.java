@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.math3.util.Precision;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,8 +48,8 @@ class ReservationTest extends BasicModelTest {
         reservation.setClient(client);
         reservation.setRoom(room);
 
-        double expected = client.getClientType().getDiscount() *
-                reservation.getRentDays() * reservation.getRoom().getPrice();
+        double expected = Precision.round(client.getClientType().getDiscount() *
+                reservation.getRentDays() * reservation.getRoom().getPrice(), 2);
         reservation.calculateReservationCost();
         assertEquals(expected, reservation.getReservationCost());
     }

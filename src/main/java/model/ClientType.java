@@ -14,7 +14,7 @@ import lombok.ToString;
 public enum ClientType implements Serializable {
 
     STANDARD("Standard", 1d),
-    PREMIUM("Premium", 0.85);
+    PREMIUM("Premium", 0.8d);
 
     @NonNull
     @Getter

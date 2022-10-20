@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.math3.util.Precision;
 
 public abstract class BasicModelTest {
 
@@ -15,8 +16,7 @@ public abstract class BasicModelTest {
     }
 
     protected static List<Double> randomDoubles() {
-        Double randomValue = (double) Math.round(RandomUtils.nextDouble(1, 1000));
-        return Collections.singletonList(randomValue);
+        return Collections.singletonList(Precision.round(RandomUtils.nextDouble(1, 1000), 2));
     }
 
     protected static List<UUID> randomUUIDs() {

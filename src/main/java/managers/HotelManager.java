@@ -104,7 +104,7 @@ public class HotelManager {
             throw new RoomException("Room with a given number doesn't exist");
         }
     }
-
+    
     public void removeRoom(Integer roomNumber) {
         try {
             entityTransaction.begin();

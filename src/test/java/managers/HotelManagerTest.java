@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import model.*;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.AfterClass;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +31,7 @@ public class HotelManagerTest extends BasicManagerTest {
         assertThrows(ClientException.class,
                 () -> hotelManager.addClientToHotel(client.getPersonalID(), randomString(),
                         randomString(), client.getAddress()));
+
     }
 
     @Test
@@ -120,6 +123,44 @@ public class HotelManagerTest extends BasicManagerTest {
         hotelManager.updateRoomEquipment(room.getRoomNumber(), equipmentType);
 
         assertEquals(equipmentType, hotelManager.aboutRoom(room.getRoomNumber()).getEquipmentType());
+    }
+
+    @Test
+    public void lockTest() throws LogicException, InterruptedException {
+        String clientID = RandomStringUtils.randomNumeric(11);
+        String clientID2 = RandomStringUtils.randomNumeric(11);
+        int roomNumber = RandomUtils.nextInt();
+
+        hotelManager.addClientToHotel(clientID, RandomStringUtils.randomAlphabetic(10),
+                RandomStringUtils.randomAlphabetic(10),
+                new Address(RandomStringUtils.randomAlphanumeric(10),
+                        RandomStringUtils.randomAlphanumeric(10),
+                        RandomStringUtils.randomAlphanumeric(10)));
+        hotelManager.addClientToHotel(clientID2, RandomStringUtils.randomAlphabetic(10),
+                RandomStringUtils.randomAlphabetic(10),
+                new Address(RandomStringUtils.randomAlphanumeric(10),
+                        RandomStringUtils.randomAlphanumeric(10),
+                        RandomStringUtils.randomAlphanumeric(10)));
+
+        hotelManager.addRoom(roomNumber, RandomUtils.nextInt(1, 10),
+                RandomUtils.nextDouble(1, 100), new Deluxe(RandomStringUtils.randomAlphanumeric(25)));
+
+        LocalDateTime beginTime = LocalDateTime.now().plusDays(5);
+        LocalDateTime endTime = LocalDateTime.now().plusDays(14);
+
+        reserveRoom(clientID, roomNumber, beginTime, endTime);
+        assertThrows(ReservationException.class,
+                () -> hotelManager.reserveRoom(roomNumber, beginTime, endTime, clientID2));
+        HotelManager.getEntityManager().clear();
+        HotelManager.getEntityManager().close();
+
+
+    }
+
+    private void reserveRoom(String personalID, int roomNumber, LocalDateTime beginTime, LocalDateTime endTime)
+            throws LogicException, InterruptedException {
+        hotelManager.reserveRoom(roomNumber, beginTime, endTime, personalID);
+        Thread.sleep(1000);
     }
 
     @AfterClass
