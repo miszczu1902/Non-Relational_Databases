@@ -1,16 +1,40 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_DB: nbddb
-      POSTGRES_USER: nbd
-      POSTGRES_PASSWORD: nbdpassword
+  mongo:
+    build: .
+    image: mongocustom:1
+    container_name: mongodb
+    hostname: mongodb
+    networks:
+      - mongonet
     ports:
-      - 5432:5432
-    volumes:
-      - pg:/var/lib/postgresql/data
-volumes:
-  pg:
+      - "27017:27107"
+    environment:
+      - <ONGO_INIT_DB_ROOT_USERNAME=admin
+      - <ONGO_INIT_DB_ROOT_PASSWORD=adminpassword
+    command: --config /etc/mongod.conf
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+  mongoinit:
+    build: .
+    image: mongocustom:1
+    container_name: mongodbinit
+    hostname: mongodbinit
+    networks:
+      - mongonet
+    depends_on:
+      mongo:
+        condition: service_healthy
+    command: >
+      mongo --host mongodb:27017 --username admin --password adminpassword --authenticationDatabase admion --eval
+      
+      rs.initiate()'
+
+
+networks:
+  mongonet: { }
