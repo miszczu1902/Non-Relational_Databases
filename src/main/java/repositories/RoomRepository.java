@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import model.Room;
 
 @AllArgsConstructor
-public class RoomRepository implements Repository<Room> {
+public class RoomRepository extends AbstractMongoRepository implements Repository<Room> {
     @Override
     public Room get(Object element) {
         return null;

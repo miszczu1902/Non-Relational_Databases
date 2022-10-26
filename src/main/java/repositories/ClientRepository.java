@@ -6,7 +6,7 @@ import model.Client;
 import java.util.List;
 
 @AllArgsConstructor
-public class ClientRepository implements Repository<Client> {
+public class ClientRepository extends AbstractMongoRepository implements Repository<Client> {
 
     @Override
     public Client get(Object element) {

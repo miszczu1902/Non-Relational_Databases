@@ -1,9 +1,8 @@
 version: '3.8'
-
 services:
   mongo:
     build: .
-    image: mongocustom:1
+    image: mongo
     container_name: mongodb
     hostname: mongodb
     networks:
@@ -11,30 +10,9 @@ services:
     ports:
       - "27017:27107"
     environment:
-      - <ONGO_INIT_DB_ROOT_USERNAME=admin
-      - <ONGO_INIT_DB_ROOT_PASSWORD=adminpassword
+      - MONGO_INIT_DB_ROOT_USERNAME=admin
+      - MONGO_INIT_DB_ROOT_PASSWORD=adminpassword
     command: --config /etc/mongod.conf
-    healthcheck:
-      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
-      interval: 10s
-      timeout: 2s
-      retries: 5
-
-  mongoinit:
-    build: .
-    image: mongocustom:1
-    container_name: mongodbinit
-    hostname: mongodbinit
-    networks:
-      - mongonet
-    depends_on:
-      mongo:
-        condition: service_healthy
-    command: >
-      mongo --host mongodb:27017 --username admin --password adminpassword --authenticationDatabase admion --eval
-      
-      rs.initiate()'
-
 
 networks:
   mongonet: { }

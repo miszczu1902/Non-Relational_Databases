@@ -6,7 +6,7 @@ import model.Reservation;
 import java.util.List;
 
 @AllArgsConstructor
-public class ReservationRepository implements Repository<Reservation> {
+public class ReservationRepository extends AbstractMongoRepository implements Repository<Reservation> {
     @Override
     public Reservation get(Object element) {
         return null;
