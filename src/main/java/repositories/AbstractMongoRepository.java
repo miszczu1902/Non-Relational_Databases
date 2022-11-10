@@ -15,20 +15,20 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 
 import java.util.List;
 
-public class AbstractMongoRepository implements AutoCloseable {
+public abstract class AbstractMongoRepository implements AutoCloseable {
 
-    private ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
-    private MongoCredential credential = MongoCredential.createCredential("admin", "admin",
-            "adminpaswword".toCharArray());
-    private CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder()
+    protected ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
+    protected MongoCredential credential = MongoCredential.createCredential("admin", "admin",
+            "adminpassword".toCharArray());
+    protected CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder()
             .automatic(true)
             .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
             .build());
 
-    private MongoClient mongoClient;
-    private MongoDatabase hotelDB;
+    protected MongoClient mongoClient;
+    protected MongoDatabase hotelDB;
 
-    private void initDbConnection() {
+    public void initDbConnection() {
         MongoClientSettings settings = MongoClientSettings.builder()
                 .credential(credential)
                 .applyConnectionString(connectionString)
