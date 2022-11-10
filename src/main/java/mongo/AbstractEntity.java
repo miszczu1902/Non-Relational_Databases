@@ -1,4 +1,4 @@
-package model;
+package mongo;
 
 import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonProperty;
