@@ -5,9 +5,13 @@ import repositories.ClientRepository;
 
 public class Main {
     public static void main(String[] args) {
-        ClientRepository clientRepository = new ClientRepository();
-        clientRepository.initDbConnection();
-        clientRepository.add(new Client("ach", "to", "NBD", new Address(RandomUtils.nextLong(), "ll", "ll", "ll")));
-        System.out.println("Hello world");
+        try (ClientRepository clientRepository = new ClientRepository()) {
+            clientRepository.initDbConnection();
+            clientRepository.add(new Client("ach", "to", "NBD",
+                    new Address(RandomUtils.nextLong(), "ll", "ll", "ll")));
+            System.out.println("Hello world");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
