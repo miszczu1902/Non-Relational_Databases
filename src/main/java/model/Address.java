@@ -15,7 +15,7 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 public class Address implements Serializable {
 
     @BsonCreator
-    public Address(@NonNull @BsonProperty("ID") Long id, @NonNull @BsonProperty("city") String city,
+    public Address(@NonNull @BsonProperty("id") Long id, @NonNull @BsonProperty("city") String city,
                    @NonNull @BsonProperty("street") String street,
                    @NonNull @BsonProperty("number") String number) {
         this.id = id;

@@ -22,12 +22,12 @@ import java.util.UUID;
 public class Reservation extends AbstractEntity implements Serializable {
 
     @BsonCreator
-    public Reservation(@NonNull @BsonProperty("_id") UUID id, @NonNull @BsonProperty("room") Room room,
+    public Reservation(@NonNull @BsonProperty("room") Room room,
                        @NonNull @BsonProperty("beginTime") LocalDateTime beginTime,
                        @NonNull @BsonProperty("endTime") LocalDateTime endTime,
                        @NonNull @BsonProperty("client") Client client, @BsonProperty("reservationCost")
                        double reservationCost) {
-        super(id);
+        super();
         this.room = room;
         this.beginTime = beginTime;
         this.endTime = endTime;

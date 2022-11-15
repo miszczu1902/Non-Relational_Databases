@@ -24,7 +24,6 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
             .automatic(true)
             .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
             .build());
-
     protected MongoClient mongoClient;
     protected MongoDatabase hotelDB;
 
@@ -40,8 +39,12 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                 ))
                 .build();
 
-        mongoClient = MongoClients.create(settings);
-        hotelDB = mongoClient.getDatabase("hotel");
+        this.mongoClient = MongoClients.create(settings);
+    }
+
+    public AbstractMongoRepository() {
+        this.initDbConnection();
+        this.hotelDB = mongoClient.getDatabase("hotel");
     }
 
     @Override

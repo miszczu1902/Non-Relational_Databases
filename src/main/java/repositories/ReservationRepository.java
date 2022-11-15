@@ -31,9 +31,4 @@ public class ReservationRepository extends AbstractMongoRepository implements Re
     public List<Reservation> find(Object... elements) {
         return null;
     }
-
-    @Override
-    public List<Reservation> getAll() {
-        return null;
-    }
 }

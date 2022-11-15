@@ -31,9 +31,4 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
     public List<Room> find(Object... elements) {
         return null;
     }
-
-    @Override
-    public List<Room> getAll() {
-        return null;
-    }
 }

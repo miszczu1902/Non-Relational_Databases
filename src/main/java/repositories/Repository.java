@@ -12,6 +12,4 @@ public interface Repository<T> {
     void update(T... elements);
 
     List<T> find(Object... elements);
-
-    List<T> getAll();
 }
