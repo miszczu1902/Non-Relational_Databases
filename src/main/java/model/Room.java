@@ -40,6 +40,4 @@ public class Room implements Serializable {
     @NonNull
     @BsonProperty("equipmentType")
     private EquipmentType equipmentType;
-
-//    private Long version;
 }

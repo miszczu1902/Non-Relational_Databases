@@ -1,31 +1,25 @@
 package model;
 
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
+//@BsonDiscriminator(key="_clazz", value="basic")
 public class Basic extends EquipmentType {
     @BsonProperty("microwave")
-    protected boolean microwave = true;
+    protected boolean microwave;
 
     @BsonProperty("kettle")
-    protected boolean kettle = true;
+    protected boolean kettle;
 
     @BsonCreator
-    public Basic(@BsonProperty("equipmentDescription") String equipmentDescription) {
-        super(equipmentDescription);
-    }
-
-    @Override
-    public String getActualEquipmentType() {
-        return new ToStringBuilder(this)
-                .append("description", equipmentDescription)
-                .append("microwave", microwave)
-                .append("kettle", kettle)
-                .toString();
+    public Basic(@BsonProperty("equipmentDescription") String equipmentDescription,
+                 @BsonProperty("microwave") boolean microwave, @BsonProperty("kettle") boolean kettle) {
+        this.equipmentDescription = equipmentDescription;
+        this.microwave = microwave;
+        this.kettle = kettle;
     }
 }

@@ -1,28 +1,25 @@
 package model;
 
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
+//@BsonDiscriminator(key="_clazz", value="deluxe")
 public class Deluxe extends Extended {
 
     @BsonProperty("airConditioning")
-    protected boolean airConditioning = true;
+    protected boolean airConditioning;
 
     @BsonCreator
-    public Deluxe(@BsonProperty("equipmentDescription") String equipmentDescription) {
-        super(equipmentDescription);
-    }
-
-    @Override
-    public String getActualEquipmentType() {
-        return super.getActualEquipmentType()
-                .concat(new ToStringBuilder(this)
-                        .append("airConditioning", airConditioning)
-                        .toString());
+    public Deluxe(@BsonProperty("equipmentDescription") String equipmentDescription,
+                  @BsonProperty("microwave") boolean microwave, @BsonProperty("kettle") boolean kettle,
+                  @BsonProperty("tv") boolean tv, @BsonProperty("balcony") boolean balcony,
+                  @BsonProperty("airConditioning") boolean airConditioning) {
+        super(equipmentDescription, microwave, kettle, tv, balcony);
+        this.airConditioning = airConditioning;
     }
 }

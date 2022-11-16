@@ -1,13 +1,11 @@
 package repositories;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import model.Client;
 import org.bson.BsonDocument;
 import org.bson.BsonDocumentWriter;
-import org.bson.BsonNull;
 import org.bson.codecs.Codec;
 import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;

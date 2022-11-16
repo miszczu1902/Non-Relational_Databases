@@ -19,7 +19,8 @@ public class ClientRepositoryTest extends BasicModelTest {
     @Before
     public void prepareDataToTest() {
         client = new Client(randomString(), randomString(), randomString(),
-                new Address(RandomUtils.nextLong(), randomString(), randomString(), randomString()), ClientType.PREMIUM);
+                new Address(RandomUtils.nextLong(), randomString(), randomString(), randomString()),
+                ClientType.PREMIUM);
     }
 
     @Test

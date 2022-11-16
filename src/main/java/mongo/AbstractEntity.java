@@ -13,5 +13,5 @@ public abstract class AbstractEntity implements Serializable {
 
     @NonNull
     @BsonProperty("_id")
-    private UUID id;
+    protected UUID id;
 }

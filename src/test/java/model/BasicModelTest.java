@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -28,14 +27,14 @@ public abstract class BasicModelTest {
                 RandomStringUtils.randomAlphanumeric(RandomUtils.nextInt(1, 100)));
     }
 
-    protected static List<EquipmentType> getEquipmentTypes() {
-        List<EquipmentType> equipmentTypes = Arrays.asList(new Basic(randomString()),
-                new Extended(randomString()),
-                new Deluxe(randomString()));
-        Collections.shuffle(equipmentTypes);
-        return equipmentTypes;
-
-    }
+//    protected static List<EquipmentType> getEquipmentTypes() {
+//        List<EquipmentType> equipmentTypes = Arrays.asList(new Basic()),
+//                new Extended(randomString()),
+//                new Deluxe(randomString()));
+//        Collections.shuffle(equipmentTypes);
+//        return equipmentTypes;
+//
+//    }
 
     protected static int randomInt() {
         return randomInts().get(0);
