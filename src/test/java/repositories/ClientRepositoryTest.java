@@ -8,6 +8,8 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -48,6 +50,6 @@ public class ClientRepositoryTest extends BasicModelTest {
     public void testRemove() {
         clientRepository.add(client);
         clientRepository.remove(client);
-        assertNull(clientRepository.get(client));
+        assertThrows(NoSuchElementException.class, () -> clientRepository.get(client));
     }
 }

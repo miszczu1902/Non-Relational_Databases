@@ -2,17 +2,18 @@ package model;
 
 import java.io.Serializable;
 
-import lombok.*;
-import mongo.AbstractEntity;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.bson.codecs.pojo.annotations.BsonId;
-import org.bson.codecs.pojo.annotations.BsonProperty;
+@ToString
+@NoArgsConstructor
+public enum EquipmentType implements Serializable {
+    BASIC("Basic"),
+    EXTENDED("Extended"),
+    DELUXE("Deluxe");
 
-@Data
-@EqualsAndHashCode
-//@BsonDiscriminator(key="_clazz")
-public abstract class EquipmentType implements Serializable {
+    @Getter
+    @BsonProperty("typeInfo")
+    private String typeinfo;
 
-    @BsonProperty("equipmentDescription")
-    protected String equipmentDescription;
+    EquipmentType(@NonNull @BsonProperty("typeInfo") String typeinfo) {
+        this.typeinfo = typeinfo;
+    }
 }

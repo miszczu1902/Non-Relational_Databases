@@ -1,4 +1,4 @@
-package model;
+package repositories;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import model.*;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.math3.util.Precision;
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ReservationTest extends BasicModelTest {
+class ReservationRepositoryTest extends BasicModelTest {
 
     private static Reservation reservation;
     private static Room room;

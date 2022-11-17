@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -47,4 +48,5 @@ public abstract class BasicModelTest {
     protected static String randomString() {
         return randomStrings().get(0);
     }
+
 }

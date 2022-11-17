@@ -17,7 +17,7 @@ public class RoomRepositoryTest extends BasicModelTest {
 
     @Before
     public void prepareDataToTest() {
-        room = new Room(randomInt(), randomInt(), randomDouble(), new Basic(randomString(), true, true));
+        room = new Room(randomInt(), randomInt(), randomDouble(), EquipmentType.BASIC);
     }
 
     @Test
@@ -36,7 +36,7 @@ public class RoomRepositoryTest extends BasicModelTest {
     public void testUpdate() {
         roomRepository.add(room);
         Room newRoom = room;
-        newRoom.setEquipmentType(new Basic(randomString(), true, true));
+        newRoom.setEquipmentType(EquipmentType.BASIC);
         roomRepository.add(newRoom);
         assertEquals(newRoom, roomRepository.get(newRoom));
     }
