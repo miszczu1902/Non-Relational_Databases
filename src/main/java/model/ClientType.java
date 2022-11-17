@@ -1,13 +1,12 @@
 package model;
 
-import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+
+import java.io.Serializable;
 
 @ToString
 @NoArgsConstructor
@@ -25,7 +24,7 @@ public enum ClientType implements Serializable {
     private Double discount;
 
     @BsonCreator
-    ClientType(@NonNull @BsonProperty("typeInfo") String typeInfo, @NonNull @BsonProperty("discount") Double discount) {
+    ClientType(@BsonProperty("typeInfo") String typeInfo, @BsonProperty("discount") Double discount) {
         this.typeInfo = typeInfo;
         this.discount = discount;
     }

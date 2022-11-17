@@ -10,7 +10,8 @@ import org.junit.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ClientRepositoryTest extends BasicModelTest {
@@ -51,5 +52,12 @@ public class ClientRepositoryTest extends BasicModelTest {
         clientRepository.add(client);
         clientRepository.remove(client);
         assertThrows(NoSuchElementException.class, () -> clientRepository.get(client));
+    }
+
+    @Test
+    public void testGetAll() {
+        int oldSize = clientRepository.getAll().size();
+        clientRepository.add(client);
+        assertEquals(oldSize + 1, clientRepository.getAll().size());
     }
 }

@@ -1,6 +1,9 @@
 package mongo;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.io.Serializable;

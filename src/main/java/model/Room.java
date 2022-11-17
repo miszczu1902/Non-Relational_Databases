@@ -1,24 +1,21 @@
 package model;
 
-import java.io.Serializable;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import java.io.Serializable;
+
 @Data
 @ToString
+@RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"capacity", "price", "equipmentType"})
 public class Room implements Serializable {
 
     @BsonCreator
-    public Room(@NonNull @BsonProperty("roomNumber") Integer roomNumber, @NonNull @BsonProperty("capacity") Integer capacity,
-                @NonNull @BsonProperty("price") Double price, @NonNull @BsonProperty("equipmentType") EquipmentType equipmentType) {
+    public Room(@NonNull@BsonProperty("roomNumber") Integer roomNumber, @BsonProperty("capacity") Integer capacity,
+                @BsonProperty("price") Double price, @BsonProperty("equipmentType") EquipmentType equipmentType) {
         this.roomNumber = roomNumber;
         this.capacity = capacity;
         this.price = price;
@@ -29,15 +26,15 @@ public class Room implements Serializable {
     @BsonProperty("roomNumber")
     private Integer roomNumber;
 
-    @NonNull
+
     @BsonProperty("capacity")
     private Integer capacity;
 
-    @NonNull
+
     @BsonProperty("price")
     private Double price;
 
-    @NonNull
+
     @BsonProperty("equipmentType")
     private EquipmentType equipmentType;
 }

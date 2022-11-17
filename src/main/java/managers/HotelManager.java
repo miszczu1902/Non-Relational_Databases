@@ -28,14 +28,13 @@ public class HotelManager {
                 .toList()).isEmpty();
     }
 
-    public void addClientToHotel(String personalId, String firstName, String lastName,
-                                 Address address) throws ClientException {
+    public void addClientToHotel(String personalId) throws ClientException {
         try {
-            clientRepository.get(personalId);
+            clientRepository.get(new Client(personalId));
             throw new ClientException("A given client exists");
 
         } catch (NoSuchElementException e) {
-            clientRepository.add(new Client(personalId, firstName, lastName, address));
+            clientRepository.add(new Client(personalId));
 
         } catch (ClientException clientException) {
             throw new ClientException(clientException.getMessage());
@@ -44,7 +43,7 @@ public class HotelManager {
 
     public Client aboutClient(String personalId) throws ClientException {
         try {
-            return clientRepository.get(personalId);
+            return clientRepository.get(new Client(personalId));
         } catch (NoSuchElementException e) {
             throw new ClientException("Any client didn't find");
         }
@@ -52,7 +51,7 @@ public class HotelManager {
 
     public void removeClientFormHotel(String personalId) {
         try {
-            clientRepository.remove(clientRepository.get(personalId));
+            clientRepository.remove(clientRepository.get(new Client(personalId)));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +61,7 @@ public class HotelManager {
     public void addRoom(Integer roomNumber, Integer capacity, Double price,
                         EquipmentType equipmentType) throws RoomException {
         try {
-            roomRepository.get(roomNumber);
+            roomRepository.get(new Room(roomNumber));
             throw new RoomException("Room with a given number exist");
 
         } catch (NoSuchElementException e) {
@@ -74,7 +73,7 @@ public class HotelManager {
 
     public Room aboutRoom(Integer roomNumber) throws RoomException {
         try {
-            return roomRepository.get(roomNumber);
+            return roomRepository.get(new Room(roomNumber));
         } catch (NoSuchElementException e) {
             throw new RoomException("Room with a given number doesn't exist");
         }
@@ -85,7 +84,7 @@ public class HotelManager {
             if (checkIfRoomCantBeReserved(roomNumber, LocalDateTime.now())) {
                 throw new RoomException("A given room couldn't be removed because it's reserved");
             }
-            Room room = roomRepository.get(roomNumber);
+            Room room = roomRepository.get(new Room(roomNumber));
             roomRepository.remove(room);
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +93,7 @@ public class HotelManager {
 
     public void updateRoomEquipment(int roomNumber, EquipmentType equipment) {
         try {
-            Room room = roomRepository.get(roomNumber);
+            Room room = roomRepository.get(new Room(roomNumber));
             room.setEquipmentType(equipment);
             roomRepository.update(room);
         } catch (Exception e) {
@@ -105,7 +104,7 @@ public class HotelManager {
     public UUID reserveRoom(Integer roomNumber, LocalDateTime beginTime, LocalDateTime endTime,
                             String personalId) throws LogicException {
         try {
-            roomRepository.get(roomNumber);
+            roomRepository.get(new Room(roomNumber));
 
             if (beginTime.isAfter(endTime) ||
                     endTime.isBefore(beginTime)) {
@@ -122,8 +121,8 @@ public class HotelManager {
 
             } else {
                 Reservation newReservation =
-                        new Reservation(new UniqueIdMgd(), roomRepository.get(roomNumber), beginTime, endTime,
-                                clientRepository.get(personalId), 0);
+                        new Reservation(new UniqueIdMgd(), roomRepository.get(new Room(roomNumber)), beginTime, endTime,
+                                clientRepository.get(new Client(personalId)), 0);
                 newReservation.calculateReservationCost();
 
                 if (newReservation.getReservationCost() >= 1000 &&
@@ -143,7 +142,7 @@ public class HotelManager {
 
     public Reservation aboutReservation(UUID reservationId) throws ReservationException {
         try {
-            return reservationRepository.get(reservationId);
+            return reservationRepository.get(new Reservation(new UniqueIdMgd(reservationId)));
         } catch (NoSuchElementException e) {
             throw new ReservationException("Any reservation for a given condition doesn't exist");
         }

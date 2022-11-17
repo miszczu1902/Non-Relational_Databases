@@ -5,8 +5,6 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 
-import java.util.UUID;
-
 
 @NoArgsConstructor
 public class UniqueIdCodecProvider implements CodecProvider {

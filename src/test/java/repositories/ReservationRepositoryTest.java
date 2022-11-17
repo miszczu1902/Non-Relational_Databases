@@ -6,10 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ReservationRepositoryTest extends BasicModelTest {
 
@@ -20,7 +20,7 @@ public class ReservationRepositoryTest extends BasicModelTest {
     public void prepareDataToTest() {
         reservation = new Reservation(new UniqueIdMgd(),
                 new Room(randomInt(), randomInt(), randomDouble(), EquipmentType.BASIC),
-                LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MINUTES), LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MINUTES),
+                LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2),
                 new Client(randomString(), randomString(), randomString(),
                         new Address(randomInt(), randomString(), randomString(), randomString()),
                         ClientType.PREMIUM), randomDouble());
@@ -43,7 +43,7 @@ public class ReservationRepositoryTest extends BasicModelTest {
     public void testUpdate() {
         reservationRepository.add(reservation);
         Reservation newReservation = reservation;
-        newReservation.setEndTime(LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MINUTES));
+        newReservation.setEndTime(LocalDateTime.now().plusDays(2));
         reservationRepository.update(newReservation);
         assertEquals(newReservation, reservationRepository.get(newReservation));
     }
@@ -53,5 +53,12 @@ public class ReservationRepositoryTest extends BasicModelTest {
         reservationRepository.add(reservation);
         reservationRepository.remove(reservation);
         assertThrows(NoSuchElementException.class, () -> reservationRepository.get(reservation));
+    }
+
+    @Test
+    public void testGetAll() {
+        int oldSize = reservationRepository.getAll().size();
+        reservationRepository.add(reservation);
+        assertEquals(oldSize + 1, reservationRepository.getAll().size());
     }
 }

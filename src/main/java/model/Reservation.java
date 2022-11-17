@@ -1,19 +1,15 @@
 package model;
 
-import java.io.Serializable;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import mongo.AbstractEntity;
 import mongo.UniqueIdMgd;
 import org.apache.commons.math3.util.Precision;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @ToString
@@ -22,31 +18,34 @@ import java.time.LocalDateTime;
 public class Reservation extends AbstractEntity implements Serializable {
 
     @BsonCreator
-    public Reservation(@NonNull @BsonProperty("_id") UniqueIdMgd id, @NonNull @BsonProperty("room") Room room,
-                       @NonNull @BsonProperty("beginTime") LocalDateTime beginTime,
-                       @NonNull @BsonProperty("endTime") LocalDateTime endTime,
-                       @NonNull @BsonProperty("client") Client client, @BsonProperty("reservationCost")
+    public Reservation( @BsonProperty("_id") UniqueIdMgd id,  @BsonProperty("room") Room room,
+                        @BsonProperty("beginTime") LocalDateTime beginTime,
+                        @BsonProperty("endTime") LocalDateTime endTime,
+                        @BsonProperty("client") Client client, @BsonProperty("reservationCost")
                        double reservationCost) {
         super(id);
         this.room = room;
-        this.beginTime = beginTime;
-        this.endTime = endTime;
+        this.beginTime = beginTime.truncatedTo(ChronoUnit.MINUTES);
+        this.endTime = endTime.truncatedTo(ChronoUnit.MINUTES);
         this.client = client;
         this.reservationCost = reservationCost;
     }
 
-    @NonNull
+    public Reservation(@NonNull UniqueIdMgd id) {
+        super(id);
+    }
+
     @BsonProperty("room")
     private Room room;
-    @NonNull
+
     @BsonProperty("beginTime")
     private LocalDateTime beginTime;
 
-    @NonNull
+
     @BsonProperty("endTime")
     private LocalDateTime endTime;
 
-    @NonNull
+
     @BsonProperty("client")
     private Client client;
 

@@ -1,12 +1,15 @@
 package repositories;
 
-import model.*;
+import model.BasicModelTest;
+import model.EquipmentType;
+import model.Room;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RoomRepositoryTest extends BasicModelTest {
 
@@ -44,5 +47,12 @@ public class RoomRepositoryTest extends BasicModelTest {
         roomRepository.add(room);
         roomRepository.remove(room);
         assertThrows(NoSuchElementException.class, () -> roomRepository.get(room));
+    }
+
+    @Test
+    public void testGetAll() {
+        int oldSize = roomRepository.getAll().size();
+        roomRepository.add(room);
+        assertEquals(oldSize + 1, roomRepository.getAll().size());
     }
 }

@@ -1,12 +1,5 @@
 package model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 import mongo.UniqueIdMgd;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.SerializationUtils;
@@ -15,6 +8,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ReservationTest extends BasicModelTest {
 
@@ -29,7 +28,7 @@ class ReservationTest extends BasicModelTest {
     @BeforeAll
     public static void initialize() {
         Address address = new Address(randomInt() ,randomString(), randomString(), randomString());
-        client = new Client(randomString(), randomString(), randomString(), address);
+        client = new Client(randomString(), randomString(), randomString(), address, ClientType.STANDARD);
         room = new Room(randomInt(), randomInt(), randomDouble(), getEquipmentTypes().get(0));
 
         reservation = new Reservation();
