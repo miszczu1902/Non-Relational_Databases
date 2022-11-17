@@ -2,15 +2,12 @@ package repositories;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 import model.Client;
-import org.bson.BsonDocument;
-import org.bson.BsonDocumentWriter;
-import org.bson.codecs.Codec;
-import org.bson.codecs.EncoderContext;
-import org.bson.conversions.Bson;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,15 +40,9 @@ public class ClientRepository extends AbstractMongoRepository implements Reposit
 
     @Override
     public void update(Client... elements) {
-        Map<Bson, Bson> objectsToUpdate = new HashMap<>();
-        Codec<Client> clientCodec = collection.getCodecRegistry().get(Client.class);
         Stream.of(elements).forEach(element -> {
-            BsonDocument bsonDocument = new BsonDocument();
-            clientCodec.encode(new BsonDocumentWriter(bsonDocument), element, EncoderContext.builder().build());
-            objectsToUpdate.put(Filters.eq("personalID", element.getPersonalID()),
-                    Updates.set("client", bsonDocument));
+            collection.replaceOne(Filters.eq("personalID", element.getPersonalID()), element);
         });
-        objectsToUpdate.forEach((key, value) -> collection.updateOne(key, value));
     }
 
     @Override

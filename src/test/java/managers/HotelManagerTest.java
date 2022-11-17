@@ -112,7 +112,7 @@ public class HotelManagerTest extends BasicManagerTest {
     @Test
     public void testUpdateRoomEquipment() throws RoomException {
         Room room = randomRoom();
-        EquipmentType equipmentType = EquipmentType.BASIC;
+        EquipmentType equipmentType = EquipmentType.EXTENDED;
 
         hotelManager.addRoom(room.getRoomNumber(), room.getCapacity(), room.getPrice(), EquipmentType.BASIC);
         hotelManager.updateRoomEquipment(room.getRoomNumber(), equipmentType);
