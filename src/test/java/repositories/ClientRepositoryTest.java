@@ -42,7 +42,7 @@ public class ClientRepositoryTest extends BasicModelTest {
         clientRepository.add(client);
         Client newClient = client;
         newClient.setClientType(ClientType.STANDARD);
-        clientRepository.add(newClient);
+        clientRepository.update(newClient);
         assertEquals(newClient, clientRepository.get(newClient));
     }
 

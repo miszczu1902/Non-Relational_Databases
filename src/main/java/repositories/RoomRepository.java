@@ -17,6 +17,7 @@ import org.bson.conversions.Bson;
 public class RoomRepository extends AbstractMongoRepository implements Repository<Room> {
 
     private MongoCollection<Room> collection;
+
     public RoomRepository() {
         super();
         this.collection = hotelDB.getCollection("rooms", Room.class);
@@ -24,7 +25,9 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public Room get(Object element) {
-        return collection.find(Filters.eq("roomNumber", ((Room) element).getRoomNumber())).first();
+        return Optional.ofNullable(collection.find(
+                        Filters.eq("roomNumber", ((Room) element).getRoomNumber())).first())
+                .orElseThrow();
     }
 
     @Override
@@ -54,8 +57,13 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public List<Room> find(Object... elements) {
-        return Arrays.stream(elements)
+        return Optional.of(Arrays.stream(elements)
                 .map(this::get)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())).orElseThrow();
+    }
+
+    @Override
+    public List<Room> getAll() {
+        return collection.find().into(new ArrayList<>());
     }
 }

@@ -28,14 +28,12 @@ public abstract class BasicModelTest {
                 RandomStringUtils.randomAlphanumeric(RandomUtils.nextInt(1, 100)));
     }
 
-//    protected static List<EquipmentType> getEquipmentTypes() {
-//        List<EquipmentType> equipmentTypes = Arrays.asList(new Basic()),
-//                new Extended(randomString()),
-//                new Deluxe(randomString()));
-//        Collections.shuffle(equipmentTypes);
-//        return equipmentTypes;
-//
-//    }
+    protected static List<EquipmentType> getEquipmentTypes() {
+        List<EquipmentType> equipmentTypes = Arrays.asList(EquipmentType.values());
+        Collections.shuffle(equipmentTypes);
+        return equipmentTypes;
+
+    }
 
     protected static int randomInt() {
         return randomInts().get(0);

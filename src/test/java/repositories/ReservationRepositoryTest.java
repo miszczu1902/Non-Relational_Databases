@@ -1,95 +1,57 @@
 package repositories;
 
-import static org.junit.jupiter.api.Assertions.*;
+import model.*;
+import mongo.UniqueIdMgd;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.time.temporal.ChronoUnit;
+import java.util.NoSuchElementException;
 
-import model.*;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.math3.util.Precision;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.*;
 
-class ReservationRepositoryTest extends BasicModelTest {
+public class ReservationRepositoryTest extends BasicModelTest {
 
-    private static Reservation reservation;
-    private static Room room;
-    private static Client client;
+    private ReservationRepository reservationRepository = new ReservationRepository();
+    private Reservation reservation;
 
-    private static List<ClientType> getClientTypes() {
-        return Arrays.asList(ClientType.values());
-    }
+    @Before
+    public void prepareDataToTest() {
+        reservation = new Reservation(new UniqueIdMgd(),
+                new Room(randomInt(), randomInt(), randomDouble(), EquipmentType.BASIC),
+                LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MINUTES), LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MINUTES),
+                new Client(randomString(), randomString(), randomString(),
+                        new Address(randomInt(), randomString(), randomString(), randomString()),
+                        ClientType.PREMIUM), randomDouble());
 
-    @BeforeAll
-    public static void initialize() {
-        Address address = new Address(randomInt() ,randomString(), randomString(), randomString());
-        client = new Client(randomString(), randomString(), randomString(), address);
-        room = new Room(randomInt(), randomInt(), randomDouble(), getEquipmentTypes().get(0));
-
-        reservation = new Reservation();
-    }
-
-    @ParameterizedTest
-    @MethodSource("randomUUIDs")
-    void testId(UUID uuid) {
-        reservation.setId(uuid);
-        assertEquals(uuid, reservation.getId());
-    }
-
-    @ParameterizedTest
-    @MethodSource("getClientTypes")
-    void testCalculateReservationCost(ClientType clientType) {
-        client.setClientType(clientType);
-        reservation.setClient(client);
-        reservation.setRoom(room);
-
-        double expected = Precision.round(client.getClientType().getDiscount() *
-                reservation.getRentDays() * reservation.getRoom().getPrice(), 2);
-        reservation.calculateReservationCost();
-        assertEquals(expected, reservation.getReservationCost());
     }
 
     @Test
-    void testEquals() {
-        reservation = new Reservation(UUID.randomUUID(), room, LocalDateTime.now(),
-                LocalDateTime.now().plusDays(RandomUtils.nextInt()), client,randomInt());
-        Reservation clonedReservation = SerializationUtils.clone(reservation);
-        assertEquals(reservation, clonedReservation);
-
-
-        clonedReservation.setEndTime(LocalDateTime.now());
-        assertEquals(reservation, clonedReservation);
-
-        clonedReservation.setId(UUID.randomUUID());
-        assertNotEquals(reservation, clonedReservation);
+    public void testAdd() {
+        reservationRepository.add(reservation);
+        assertEquals(reservation, reservationRepository.get(reservation));
     }
 
     @Test
-    void testRentDays() {
-        LocalDateTime beginTime = LocalDateTime.now();
-        LocalDateTime endTime = beginTime.plusDays(randomInt());
-        reservation.setBeginTime(beginTime);
-        reservation.setEndTime(endTime);
-
-        assertEquals(endTime.getDayOfYear() - beginTime.getDayOfYear(),
-                reservation.getRentDays());
+    public void testGet() {
+        reservationRepository.add(reservation);
+        assertEquals(reservation, reservationRepository.get(reservation));
     }
 
     @Test
-    void testRoom() {
-        reservation.setRoom(room);
-        assertEquals(room, reservation.getRoom());
+    public void testUpdate() {
+        reservationRepository.add(reservation);
+        Reservation newReservation = reservation;
+        newReservation.setEndTime(LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MINUTES));
+        reservationRepository.update(newReservation);
+        assertEquals(newReservation, reservationRepository.get(newReservation));
     }
 
     @Test
-    void testClient() {
-        reservation.setClient(client);
-        assertEquals(client, reservation.getClient());
+    public void testRemove() {
+        reservationRepository.add(reservation);
+        reservationRepository.remove(reservation);
+        assertThrows(NoSuchElementException.class, () -> reservationRepository.get(reservation));
     }
 }

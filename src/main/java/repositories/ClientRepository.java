@@ -25,8 +25,8 @@ public class ClientRepository extends AbstractMongoRepository implements Reposit
 
     @Override
     public Client get(Object element) {
-        return collection.find(Filters.eq("personalID", (
-                (Client) element).getPersonalID())).first();
+        return Optional.ofNullable(collection.find(Filters.eq("personalID", (
+                (Client) element).getPersonalID())).first()).orElseThrow();
     }
 
     @Override
@@ -56,8 +56,13 @@ public class ClientRepository extends AbstractMongoRepository implements Reposit
 
     @Override
     public List<Client> find(Object... elements) {
-        return Arrays.stream(elements)
+        return Optional.of(Arrays.stream(elements)
                 .map(this::get)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())).orElseThrow();
+    }
+
+    @Override
+    public List<Client> getAll() {
+        return collection.find().into(new ArrayList<>());
     }
 }

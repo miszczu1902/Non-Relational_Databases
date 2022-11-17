@@ -4,14 +4,16 @@ import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.io.Serializable;
-import java.util.UUID;
 
-@Data
 @NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode
 public abstract class AbstractEntity implements Serializable {
 
-    @NonNull
+    @Getter
     @BsonProperty("_id")
-    protected UUID id;
+    protected UniqueIdMgd id;
+
+    public AbstractEntity(@NonNull UniqueIdMgd id) {
+        this.id = id;
+    }
 }

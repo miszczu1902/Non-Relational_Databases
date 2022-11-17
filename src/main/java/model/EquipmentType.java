@@ -1,5 +1,11 @@
 package model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonProperty;
+
 import java.io.Serializable;
 
 @ToString

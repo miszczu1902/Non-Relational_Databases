@@ -8,21 +8,21 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import mongo.AbstractEntity;
+import mongo.UniqueIdMgd;
 import org.apache.commons.math3.util.Precision;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @ToString
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"beginTime", "endTime", "client", "reservationCost"}, callSuper = true)
+@EqualsAndHashCode(exclude = {"room", "beginTime", "endTime", "client", "reservationCost"}, callSuper = true)
 public class Reservation extends AbstractEntity implements Serializable {
 
     @BsonCreator
-    public Reservation(@NonNull @BsonProperty("_id") UUID id, @NonNull @BsonProperty("room") Room room,
+    public Reservation(@NonNull @BsonProperty("_id") UniqueIdMgd id, @NonNull @BsonProperty("room") Room room,
                        @NonNull @BsonProperty("beginTime") LocalDateTime beginTime,
                        @NonNull @BsonProperty("endTime") LocalDateTime endTime,
                        @NonNull @BsonProperty("client") Client client, @BsonProperty("reservationCost")

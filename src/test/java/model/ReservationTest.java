@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import mongo.UniqueIdMgd;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.math3.util.Precision;
@@ -35,13 +36,6 @@ class ReservationTest extends BasicModelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("randomUUIDs")
-    void testId(UUID uuid) {
-        reservation.setId(uuid);
-        assertEquals(uuid, reservation.getId());
-    }
-
-    @ParameterizedTest
     @MethodSource("getClientTypes")
     void testCalculateReservationCost(ClientType clientType) {
         client.setClientType(clientType);
@@ -56,7 +50,7 @@ class ReservationTest extends BasicModelTest {
 
     @Test
     void testEquals() {
-        reservation = new Reservation(UUID.randomUUID(), room, LocalDateTime.now(),
+        reservation = new Reservation(new UniqueIdMgd(), room, LocalDateTime.now(),
                 LocalDateTime.now().plusDays(RandomUtils.nextInt()), client,randomInt());
         Reservation clonedReservation = SerializationUtils.clone(reservation);
         assertEquals(reservation, clonedReservation);
@@ -64,9 +58,6 @@ class ReservationTest extends BasicModelTest {
 
         clonedReservation.setEndTime(LocalDateTime.now());
         assertEquals(reservation, clonedReservation);
-
-        clonedReservation.setId(UUID.randomUUID());
-        assertNotEquals(reservation, clonedReservation);
     }
 
     @Test
