@@ -12,10 +12,11 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import redis.AbstractRedisConnector;
 
 import java.util.List;
 
-public abstract class AbstractMongoRepository implements AutoCloseable {
+public abstract class AbstractMongoRepository extends AbstractRedisConnector {
 
     protected ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
     protected MongoCredential credential = MongoCredential.createCredential("admin", "admin",
@@ -27,7 +28,10 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
     protected MongoClient mongoClient;
     protected MongoDatabase hotelDB;
 
+    @Override
     public void initDbConnection() {
+        super.initDbConnection();
+
         MongoClientSettings settings = MongoClientSettings.builder()
                 .credential(credential)
                 .applyConnectionString(connectionString)
@@ -45,9 +49,5 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
     public AbstractMongoRepository() {
         this.initDbConnection();
         this.hotelDB = mongoClient.getDatabase("hotel");
-    }
-
-    @Override
-    public void close() throws Exception {
     }
 }
