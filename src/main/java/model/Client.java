@@ -1,5 +1,7 @@
 package model;
 
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonId;
@@ -15,9 +17,12 @@ import java.io.Serializable;
 public class Client implements Serializable {
 
     @BsonCreator
-    public Client(@BsonProperty("personalID") String personalID, @BsonProperty("firstName") String firstName,
-                  @BsonProperty("lastName") String lastName, @BsonProperty("address") Address address,
-                  @BsonProperty("clientType") ClientType clientType) {
+    @JsonbCreator
+    public Client(@BsonProperty("personalID") @JsonbProperty("personalID") String personalID,
+                  @BsonProperty("firstName") @JsonbProperty("firstName") String firstName,
+                  @BsonProperty("lastName") @JsonbProperty("lastName") String lastName,
+                  @BsonProperty("address") @JsonbProperty("address") Address address,
+                  @BsonProperty("clientType") @JsonbProperty("clientType") ClientType clientType) {
         this.personalID = personalID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -29,20 +34,22 @@ public class Client implements Serializable {
     @BsonId
     @NonNull
     @BsonProperty("personalID")
+    @JsonbProperty("personalID")
     private String personalID;
 
-
     @BsonProperty("firstName")
+    @JsonbProperty("firstName")
     private String firstName;
 
-
     @BsonProperty("lastName")
+    @JsonbProperty("lastName")
     private String lastName;
 
-
     @BsonProperty("address")
+    @JsonbProperty("address")
     private Address address;
 
     @BsonProperty("clientType")
+    @JsonbProperty("clientType")
     private ClientType clientType = ClientType.STANDARD;
 }

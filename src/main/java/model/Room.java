@@ -1,5 +1,7 @@
 package model;
 
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonId;
@@ -15,8 +17,11 @@ import java.io.Serializable;
 public class Room implements Serializable {
 
     @BsonCreator
-    public Room(@NonNull@BsonProperty("roomNumber") Integer roomNumber, @BsonProperty("capacity") Integer capacity,
-                @BsonProperty("price") Double price, @BsonProperty("equipmentType") EquipmentType equipmentType) {
+    @JsonbCreator
+    public Room(@NonNull @BsonProperty("roomNumber") @JsonbProperty("roomNumber") Integer roomNumber,
+                @BsonProperty("capacity") @JsonbProperty("capacity") Integer capacity,
+                @BsonProperty("price") @JsonbProperty("price") Double price,
+                @BsonProperty("equipmentType") @JsonbProperty("equipmentType") EquipmentType equipmentType) {
         this.roomNumber = roomNumber;
         this.capacity = capacity;
         this.price = price;
@@ -25,18 +30,19 @@ public class Room implements Serializable {
 
     @NonNull
     @BsonProperty("roomNumber")
+    @JsonbProperty("roomNumber")
     @BsonId
     private Integer roomNumber;
 
-
     @BsonProperty("capacity")
+    @JsonbProperty("capacity")
     private Integer capacity;
 
-
     @BsonProperty("price")
+    @JsonbProperty("price")
     private Double price;
 
-
     @BsonProperty("equipmentType")
+    @JsonbProperty("equipmentType")
     private EquipmentType equipmentType;
 }

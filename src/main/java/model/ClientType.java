@@ -1,5 +1,7 @@
 package model;
 
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -17,14 +19,18 @@ public enum ClientType implements Serializable {
 
     @Getter
     @BsonProperty("typeInfo")
+    @JsonbProperty("typeInfo")
     private String typeInfo;
 
     @Getter
     @BsonProperty("discount")
+    @JsonbProperty("discount")
     private Double discount;
 
     @BsonCreator
-    ClientType(@BsonProperty("typeInfo") String typeInfo, @BsonProperty("discount") Double discount) {
+    @JsonbCreator
+    ClientType(@BsonProperty("typeInfo") @JsonbProperty("typeInfo") String typeInfo,
+               @BsonProperty("discount") @JsonbProperty("discount") Double discount) {
         this.typeInfo = typeInfo;
         this.discount = discount;
     }
