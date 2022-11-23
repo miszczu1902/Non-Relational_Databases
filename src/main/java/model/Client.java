@@ -2,6 +2,7 @@ package model;
 
 import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.io.Serializable;
@@ -25,6 +26,7 @@ public class Client implements Serializable {
     }
 
     @Getter
+    @BsonId
     @NonNull
     @BsonProperty("personalID")
     private String personalID;
