@@ -7,10 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ClientRepositoryTest extends BasicModelTest {
-    private static ClientRepository repository = new ClientRepository();
+public class ClientMongoRepositoryTest extends BasicModelTest {
+    private static ClientMongoRepository repository = new ClientMongoRepository();
     private Client client;
 
     @Test
@@ -58,13 +59,5 @@ public class ClientRepositoryTest extends BasicModelTest {
 
         repository.add(client);
         assertEquals(oldSize + 1, repository.getAll().size());
-    }
-
-    @Test
-    public void testClear() {
-        repository.add(randomClient());
-        repository.clear();
-
-        assertTrue(repository.getAll().isEmpty());
     }
 }

@@ -47,4 +47,13 @@ public abstract class BasicModelTest {
         return randomStrings().get(0);
     }
 
+    protected static Client randomClient() {
+        return new Client(randomString(), randomString(), randomString(),
+                new Address(RandomUtils.nextLong(), randomString(), randomString(), randomString()),
+                ClientType.STANDARD);
+    }
+
+    protected static Room randomRoom() {
+        return new Room(randomInt(), randomInt(), randomDouble(), EquipmentType.EXTENDED);
+    }
 }

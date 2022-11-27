@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class AbstractRedisConnector implements AutoCloseable {
+public abstract class AbstractRedisConnector implements AutoCloseable {
     protected static JedisPooled pool;
     protected Properties properties = new Properties();
 
@@ -21,12 +21,11 @@ public class AbstractRedisConnector implements AutoCloseable {
                     properties.getProperty("hostname"), Integer.parseInt(properties.getProperty("port"))),
                     DefaultJedisClientConfig.builder().build());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
     @Override
     public void close() throws Exception {
-
     }
 }

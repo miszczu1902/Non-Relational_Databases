@@ -1,59 +1,129 @@
 package repositories;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import model.Client;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.exceptions.JedisDataException;
+import redis.clients.jedis.exceptions.JedisException;
+import redis.clients.jedis.search.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class ClientRepository extends AbstractMongoRepository implements Repository<Client> {
+public class ClientRepository extends ClientMongoRepository {
+    private Jsonb jsonb = JsonbBuilder.create();
+    private ClientMongoRepository mongoRepository = new ClientMongoRepository();
 
-    private MongoCollection<Client> collection;
+    private final String prefix = "client_";
 
     public ClientRepository() {
         super();
-        this.collection = hotelDB.getCollection("clients", Client.class);
     }
 
     @Override
     public Client get(Object element) {
-        return Optional.ofNullable(collection.find(Filters.eq("personalID", (
-                (Client) element).getPersonalID())).first()).orElseThrow();
+        try {
+            Client client = (Client) element;
+            return Optional.ofNullable(pool.jsonGet(prefix + client.getPersonalID(), Client.class))
+                    .orElseThrow();
+        } catch (JedisDataException e) {
+            throw new JedisDataException("Redis operation failed", e);
+        } catch (JedisException e) {
+            return mongoRepository.get(element);
+        }
     }
 
     @Override
     public void add(Client... elements) {
-        Stream.of(elements).forEach(collection::insertOne);
+        try {
+            Arrays.stream(elements).forEach(client ->
+                    pool.jsonSet(prefix + client.getPersonalID(), jsonb.toJson(client)));
+            mongoRepository.add(elements);
+        } catch (JedisDataException e) {
+            throw new JedisDataException("Redis operation failed", e);
+        } catch (JedisException e) {
+            throw new JedisException("Redis connection failed", e);
+        }
     }
 
     @Override
     public void remove(Client... elements) {
-        Stream.of(elements).forEach(element -> collection.deleteOne(
-                Filters.eq("personalID", element.getPersonalID())
-        ));
+        try {
+            Arrays.stream(elements).forEach(client ->
+                    pool.jsonDel(prefix + client.getPersonalID()));
+            mongoRepository.remove(elements);
+        } catch (JedisDataException e) {
+            throw new JedisDataException("Redis operation failed", e);
+        } catch (JedisException e) {
+            throw new RuntimeException("Redis connection failed", e);
+        }
     }
 
     @Override
     public void update(Client... elements) {
-        Stream.of(elements).forEach(element -> {
-            collection.replaceOne(Filters.eq("personalID", element.getPersonalID()), element);
-        });
+        try {
+            Arrays.stream(elements).forEach(client ->
+                    pool.jsonSet(prefix + client.getPersonalID(), jsonb.toJson(client)));
+            mongoRepository.update(elements);
+        } catch (JedisDataException e) {
+            throw new JedisDataException("Redis operation failed", e);
+        } catch (JedisException e) {
+            throw new JedisException("Redis connection failed", e);
+        }
     }
 
     @Override
     public List<Client> find(Object... elements) {
-        return Optional.of(Arrays.stream(elements)
-                .map(this::get)
-                .collect(Collectors.toList())).orElseThrow();
+        try {
+            return Optional.of(Arrays.stream(elements).map(this::get)
+                    .collect(Collectors.toList())).orElseThrow();
+        } catch (JedisException e) {
+            return super.find(elements);
+        }
     }
 
     @Override
     public List<Client> getAll() {
-        return collection.find().into(new ArrayList<>());
+        try {
+            Schema schema = new Schema().addTextField("$.personalID", 1.0);
+            IndexDefinition rule = new IndexDefinition(IndexDefinition.Type.JSON)
+                    .setPrefixes(prefix);
+
+            try {
+                pool.ftDropIndex("client-search");
+            } catch (JedisDataException e) {
+                throw new JedisDataException("Redis operation failed", e);
+            } finally {
+                pool.ftCreate("client-search", IndexOptions.defaultOptions().setDefinition(rule), schema);
+            }
+
+            SearchResult searchResult = pool.ftSearch("client-search",
+                    new Query());
+            return searchResult.getDocuments().stream()
+                    .map(document -> pool.jsonGet(document.getId(), Client.class))
+                    .collect(Collectors.toList());
+        } catch (JedisDataException e) {
+            throw new JedisDataException("Redis operation failed", e);
+        } catch (JedisException e) {
+            return mongoRepository.getAll();
+        }
+    }
+
+    public void clear() {
+        try (Jedis jedis = new Jedis(properties.getProperty("hostname"),
+                Integer.parseInt(properties.getProperty("port")))) {
+            jedis.flushDB();
+        } catch (JedisException e) {
+            throw new JedisException("Redis operation failed", e);
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        pool.getPool().close();
+        super.close();
     }
 }

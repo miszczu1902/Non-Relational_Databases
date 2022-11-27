@@ -1,7 +1,5 @@
 package model;
 
-import jakarta.json.bind.annotation.JsonbCreator;
-import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.*;
 import mongo.AbstractEntity;
 import mongo.UniqueIdMgd;
@@ -20,13 +18,12 @@ import java.time.temporal.ChronoUnit;
 public class Reservation extends AbstractEntity implements Serializable {
 
     @BsonCreator
-    @JsonbCreator
-    public Reservation(@BsonProperty("_id") @JsonbProperty("_id") UniqueIdMgd id,
-                       @BsonProperty("room") @JsonbProperty("room") Room room,
-                       @BsonProperty("beginTime") @JsonbProperty("beginTime") LocalDateTime beginTime,
-                       @BsonProperty("endTime") @JsonbProperty("endTime") LocalDateTime endTime,
-                       @BsonProperty("client") @JsonbProperty("client")Client client,
-                       @BsonProperty("reservationCost") @JsonbProperty("reservationCost") double reservationCost) {
+    public Reservation(@BsonProperty("_id") UniqueIdMgd id,
+                       @BsonProperty("room") Room room,
+                       @BsonProperty("beginTime") LocalDateTime beginTime,
+                       @BsonProperty("endTime") LocalDateTime endTime,
+                       @BsonProperty("client") Client client,
+                       @BsonProperty("reservationCost") double reservationCost) {
         super(id);
         this.room = room;
         this.beginTime = beginTime.truncatedTo(ChronoUnit.MINUTES);
@@ -40,25 +37,20 @@ public class Reservation extends AbstractEntity implements Serializable {
     }
 
     @BsonProperty("room")
-    @JsonbProperty("room")
     private Room room;
 
     @BsonProperty("beginTime")
-    @JsonbProperty("beginTime")
     private LocalDateTime beginTime;
 
 
     @BsonProperty("endTime")
-    @JsonbProperty("endTime")
     private LocalDateTime endTime;
 
 
     @BsonProperty("client")
-    @JsonbProperty("client")
     private Client client;
 
     @BsonProperty("reservationCost")
-    @JsonbProperty("reservationCost")
     private double reservationCost;
 
     public int getRentDays() {

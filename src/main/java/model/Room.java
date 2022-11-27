@@ -4,7 +4,6 @@ import jakarta.json.bind.annotation.JsonbCreator;
 import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonCreator;
-import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.io.Serializable;
@@ -31,7 +30,6 @@ public class Room implements Serializable {
     @NonNull
     @BsonProperty("roomNumber")
     @JsonbProperty("roomNumber")
-    @BsonId
     private Integer roomNumber;
 
     @BsonProperty("capacity")

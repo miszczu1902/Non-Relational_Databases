@@ -6,9 +6,7 @@ import exceptions.ReservationException;
 import exceptions.RoomException;
 import model.*;
 import mongo.UniqueIdMgd;
-import repositories.ClientRepository;
-import repositories.ReservationRepository;
-import repositories.RoomRepository;
+import repositories.*;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;

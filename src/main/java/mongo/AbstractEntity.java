@@ -1,6 +1,5 @@
 package mongo;
 
-import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,6 @@ public abstract class AbstractEntity implements Serializable {
 
     @Getter
     @BsonProperty("_id")
-    @JsonbProperty("_id")
     protected UniqueIdMgd id;
 
     public AbstractEntity(@NonNull UniqueIdMgd id) {

@@ -1,58 +1,69 @@
 package repositories;
 
-import model.BasicModelTest;
-import model.EquipmentType;
-import model.Room;
-import org.junit.Before;
-import org.junit.Test;
+import model.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RoomRepositoryTest extends BasicModelTest {
 
-    private RoomRepository roomRepository = new RoomRepository();
+    private RoomRepository repository = new RoomRepository();
     private Room room;
-
-    @Before
-    public void prepareDataToTest() {
-        room = new Room(randomInt(), randomInt(), randomDouble(), EquipmentType.BASIC);
-    }
 
     @Test
     public void testAdd() {
-        roomRepository.add(room);
-        assertEquals(room, roomRepository.get(room));
+        room = randomRoom();
+
+        repository.add(room);
+        repository.find(room).forEach(element -> assertEquals(element, room));
     }
 
     @Test
     public void testGet() {
-        roomRepository.add(room);
-        assertEquals(room, roomRepository.get(room));
+        room = randomRoom();
+
+        repository.add(room);
+        assertEquals(room, repository.get(room));
     }
 
     @Test
     public void testUpdate() {
-        roomRepository.add(room);
+        room = randomRoom();
+
+        repository.add(room);
+
         Room newRoom = room;
-        newRoom.setEquipmentType(EquipmentType.BASIC);
-        roomRepository.update(newRoom);
-        assertEquals(newRoom, roomRepository.get(newRoom));
+        newRoom.setCapacity(randomInt());
+
+        repository.update(newRoom);
+        assertEquals(newRoom, repository.get(newRoom));
     }
 
     @Test
     public void testRemove() {
-        roomRepository.add(room);
-        roomRepository.remove(room);
-        assertThrows(NoSuchElementException.class, () -> roomRepository.get(room));
+        room = randomRoom();
+
+        repository.add(room);
+        repository.remove(room);
+        assertThrows(NoSuchElementException.class, () -> repository.get(room));
     }
 
     @Test
     public void testGetAll() {
-        int oldSize = roomRepository.getAll().size();
-        roomRepository.add(room);
-        assertEquals(oldSize + 1, roomRepository.getAll().size());
+        int oldSize = repository.getAll().size();
+        room = randomRoom();
+
+        repository.add(room);
+        assertEquals(oldSize + 1, repository.getAll().size());
+    }
+
+    @Test
+    public void testClear() {
+        room = randomRoom();
+        repository.clear();
+
+        assertTrue(repository.getAll().isEmpty());
     }
 }

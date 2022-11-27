@@ -31,7 +31,6 @@ public class Client implements Serializable {
     }
 
     @Getter
-    @BsonId
     @NonNull
     @BsonProperty("personalID")
     @JsonbProperty("personalID")
