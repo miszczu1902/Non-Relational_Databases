@@ -12,11 +12,10 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import redis.AbstractRedisConnector;
 
 import java.util.List;
 
-public abstract class AbstractMongoRepository extends AbstractRedisConnector {
+public abstract class AbstractMongoRepository {
 
     protected ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
     protected MongoCredential credential = MongoCredential.createCredential("admin", "admin",
@@ -28,10 +27,7 @@ public abstract class AbstractMongoRepository extends AbstractRedisConnector {
     protected MongoClient mongoClient;
     protected MongoDatabase hotelDB;
 
-    @Override
     public void initDbConnection() {
-        super.initDbConnection();
-
         MongoClientSettings settings = MongoClientSettings.builder()
                 .credential(credential)
                 .applyConnectionString(connectionString)

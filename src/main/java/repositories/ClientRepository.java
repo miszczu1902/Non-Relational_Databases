@@ -3,6 +3,7 @@ package repositories;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import model.Client;
+import redis.AbstractRedisConnector;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.jedis.exceptions.JedisException;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ClientRepository extends ClientMongoRepository {
+public class ClientRepository extends AbstractRedisConnector implements Repository<Client> {
     private Jsonb jsonb = JsonbBuilder.create();
     private ClientMongoRepository mongoRepository = new ClientMongoRepository();
 
@@ -79,7 +80,7 @@ public class ClientRepository extends ClientMongoRepository {
             return Optional.of(Arrays.stream(elements).map(this::get)
                     .collect(Collectors.toList())).orElseThrow();
         } catch (JedisException e) {
-            return super.find(elements);
+            return mongoRepository.find(elements);
         }
     }
 
@@ -116,6 +117,5 @@ public class ClientRepository extends ClientMongoRepository {
     @Override
     public void close() throws Exception {
         pool.getPool().close();
-        super.close();
     }
 }

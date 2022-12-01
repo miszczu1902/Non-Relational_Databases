@@ -20,6 +20,10 @@ public abstract class AbstractRedisConnector implements AutoCloseable {
     protected String clientPrefix = "client_";
     protected String roomPrefix = "room_";
 
+    public AbstractRedisConnector() {
+        this.initDbConnection();
+    }
+
     public void initDbConnection() {
         try {
             properties.load(new FileInputStream(
