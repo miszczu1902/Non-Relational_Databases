@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import repositories.ClientRepository;
 import repositories.RoomRepository;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RedisFailureTest extends BasicModelTest {
 
@@ -19,6 +19,7 @@ public class RedisFailureTest extends BasicModelTest {
         roomRepository.add(room);
         roomRepository.close();
 
+        assertDoesNotThrow(() -> roomRepository.get(room));
         assertEquals(room, roomRepository.get(room));
     }
 
@@ -29,6 +30,7 @@ public class RedisFailureTest extends BasicModelTest {
         clientRepository.add(client);
         clientRepository.close();
 
+        assertDoesNotThrow(() -> clientRepository.get(client));
         assertEquals(client, clientRepository.get(client));
     }
 }
