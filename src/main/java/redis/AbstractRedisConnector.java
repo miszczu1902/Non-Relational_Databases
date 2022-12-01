@@ -18,7 +18,7 @@ public abstract class AbstractRedisConnector implements AutoCloseable {
             properties.load(new FileInputStream(
                     new File("src/main/resources/credentials.properties").getAbsoluteFile()));
             pool = new JedisPooled(new HostAndPort(
-                    properties.getProperty("hostname"), Integer.parseInt(properties.getProperty("port"))),
+                    properties.getProperty("redisHostname"), Integer.parseInt(properties.getProperty("redisPort"))),
                     DefaultJedisClientConfig.builder().build());
         } catch (IOException e) {
             e.printStackTrace();

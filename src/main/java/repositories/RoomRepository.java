@@ -91,14 +91,7 @@ public class RoomRepository extends RoomMongoRepository {
             Schema schema = new Schema().addTextField("$.roomNumber", 1.0);
             IndexDefinition rule = new IndexDefinition(IndexDefinition.Type.JSON)
                     .setPrefixes(prefix);
-
-            try {
-                pool.ftDropIndex("client-search");
-            } catch (JedisDataException e) {
-                throw new JedisDataException("Redis operation failed", e);
-            } finally {
-                pool.ftCreate("room-search", IndexOptions.defaultOptions().setDefinition(rule), schema);
-            }
+            pool.ftCreate("room-search", IndexOptions.defaultOptions().setDefinition(rule), schema);
 
             SearchResult searchResult = pool.ftSearch("room-search",
                     new Query());
@@ -113,8 +106,8 @@ public class RoomRepository extends RoomMongoRepository {
     }
 
     public void clear() {
-        try (Jedis jedis = new Jedis(properties.getProperty("hostname"),
-                Integer.parseInt(properties.getProperty("port")))) {
+        try (Jedis jedis = new Jedis(properties.getProperty("redisHostname"),
+                Integer.parseInt(properties.getProperty("redisPort")))) {
             jedis.flushDB();
         } catch (JedisException e) {
             throw new JedisException("Redis operation failed", e);

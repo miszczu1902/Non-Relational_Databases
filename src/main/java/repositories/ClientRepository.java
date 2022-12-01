@@ -91,14 +91,7 @@ public class ClientRepository extends ClientMongoRepository {
             Schema schema = new Schema().addTextField("$.personalID", 1.0);
             IndexDefinition rule = new IndexDefinition(IndexDefinition.Type.JSON)
                     .setPrefixes(prefix);
-
-            try {
-                pool.ftDropIndex("client-search");
-            } catch (JedisDataException e) {
-                throw new JedisDataException("Redis operation failed", e);
-            } finally {
-                pool.ftCreate("client-search", IndexOptions.defaultOptions().setDefinition(rule), schema);
-            }
+            pool.ftCreate("client-search", IndexOptions.defaultOptions().setDefinition(rule), schema);
 
             SearchResult searchResult = pool.ftSearch("client-search",
                     new Query());
@@ -113,8 +106,8 @@ public class ClientRepository extends ClientMongoRepository {
     }
 
     public void clear() {
-        try (Jedis jedis = new Jedis(properties.getProperty("hostname"),
-                Integer.parseInt(properties.getProperty("port")))) {
+        try (Jedis jedis = new Jedis(properties.getProperty("redisHostname"),
+                Integer.parseInt(properties.getProperty("redisPort")))) {
             jedis.flushDB();
         } catch (JedisException e) {
             throw new JedisException("Redis operation failed", e);
