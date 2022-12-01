@@ -52,19 +52,9 @@ public class ClientRepositoryTest extends BasicModelTest {
     }
 
     @Test
-    public void testGetAll() {
-        int oldSize = repository.getAll().size();
-        client = randomClient();
-
-        repository.add(client);
-        assertEquals(oldSize + 1, repository.getAll().size());
-    }
-
-    @Test
     public void testClear() {
-        repository.add(randomClient());
         repository.clear();
 
-        assertTrue(repository.getAll().isEmpty());
+        assertEquals(0, repository.size());
     }
 }

@@ -18,24 +18,19 @@ import java.util.List;
 
 public abstract class AbstractMongoRepository extends AbstractRedisConnector {
 
-    protected CodecRegistry pojoCodecRegistry;
-    protected ConnectionString connectionString;
-    protected MongoCredential credential;
+    protected ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
+    protected MongoCredential credential = MongoCredential.createCredential("admin", "admin",
+            "adminpassword".toCharArray());
+    protected CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder()
+            .automatic(true)
+            .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
+            .build());
     protected MongoClient mongoClient;
     protected MongoDatabase hotelDB;
 
     @Override
     public void initDbConnection() {
         super.initDbConnection();
-
-        connectionString = new ConnectionString(properties.getProperty("mongoURL"));
-        credential = MongoCredential.createCredential(properties.getProperty("mongoUsername"),
-                properties.getProperty("mongoDatabase"), properties.getProperty("mongoPassword").toCharArray());
-
-        pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder()
-                .automatic(true)
-                .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
-                .build());
 
         MongoClientSettings settings = MongoClientSettings.builder()
                 .credential(credential)
@@ -53,6 +48,6 @@ public abstract class AbstractMongoRepository extends AbstractRedisConnector {
 
     public AbstractMongoRepository() {
         this.initDbConnection();
-        this.hotelDB = mongoClient.getDatabase(properties.getProperty("hotelDatabase"));
+        this.hotelDB = mongoClient.getDatabase("hotel");
     }
 }

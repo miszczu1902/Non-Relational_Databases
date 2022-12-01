@@ -17,8 +17,6 @@ public class RoomRepository extends RoomMongoRepository {
     private Jsonb jsonb = JsonbBuilder.create();
     private RoomMongoRepository mongoRepository = new RoomMongoRepository();
 
-    private final String prefix = "room_";
-
     public RoomRepository() {
         super();
     }
@@ -27,7 +25,7 @@ public class RoomRepository extends RoomMongoRepository {
     public Room get(Object element) {
         try {
             Room room = (Room) element;
-            return Optional.ofNullable(pool.jsonGet(prefix + room.getRoomNumber(), Room.class))
+            return Optional.ofNullable(pool.jsonGet(roomPrefix + room.getRoomNumber(), Room.class))
                     .orElseThrow();
         } catch (JedisDataException e) {
             throw new JedisDataException("Redis operation failed", e);
@@ -40,7 +38,7 @@ public class RoomRepository extends RoomMongoRepository {
     public void add(Room... elements) {
         try {
             Arrays.stream(elements).forEach(room ->
-                    pool.jsonSet(prefix + room.getRoomNumber(), jsonb.toJson(room)));
+                    pool.jsonSet(roomPrefix + room.getRoomNumber(), jsonb.toJson(room)));
             mongoRepository.add(elements);
         } catch (JedisDataException e) {
             throw new JedisDataException("Redis operation failed", e);
@@ -53,7 +51,7 @@ public class RoomRepository extends RoomMongoRepository {
     public void remove(Room... elements) {
         try {
             Arrays.stream(elements).forEach(room ->
-                    pool.jsonDel(prefix + room.getRoomNumber()));
+                    pool.jsonDel(roomPrefix + room.getRoomNumber()));
             mongoRepository.remove(elements);
         } catch (JedisDataException e) {
             throw new JedisDataException("Redis operation failed", e);
@@ -66,7 +64,7 @@ public class RoomRepository extends RoomMongoRepository {
     public void update(Room... elements) {
         try {
             Arrays.stream(elements).forEach(room ->
-                    pool.jsonSet(prefix + room.getRoomNumber(), jsonb.toJson(room)));
+                    pool.jsonSet(roomPrefix + room.getRoomNumber(), jsonb.toJson(room)));
             mongoRepository.update(elements);
         } catch (JedisDataException e) {
             throw new JedisDataException("Redis operation failed", e);
@@ -88,13 +86,8 @@ public class RoomRepository extends RoomMongoRepository {
     @Override
     public List<Room> getAll() {
         try {
-            Schema schema = new Schema().addTextField("$.roomNumber", 1.0);
-            IndexDefinition rule = new IndexDefinition(IndexDefinition.Type.JSON)
-                    .setPrefixes(prefix);
-            pool.ftCreate("room-search", IndexOptions.defaultOptions().setDefinition(rule), schema);
+            SearchResult searchResult = pool.ftSearch("room-search", new Query());
 
-            SearchResult searchResult = pool.ftSearch("room-search",
-                    new Query());
             return searchResult.getDocuments().stream()
                     .map(document -> pool.jsonGet(document.getId(), Room.class))
                     .collect(Collectors.toList());
@@ -103,6 +96,11 @@ public class RoomRepository extends RoomMongoRepository {
         } catch (JedisException e) {
             return mongoRepository.getAll();
         }
+    }
+
+    @Override
+    public Long size() {
+        return pool.dbSize();
     }
 
     public void clear() {

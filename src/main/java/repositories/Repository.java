@@ -14,4 +14,6 @@ public interface Repository<T> {
     List<T> find(Object... elements);
 
     List<T> getAll();
+
+    Long size();
 }

@@ -59,4 +59,9 @@ public class ReservationRepository extends AbstractMongoRepository implements Re
     public List<Reservation> getAll() {
         return collection.find().into(new ArrayList<>());
     }
+
+    @Override
+    public Long size() {
+        return collection.countDocuments();
+    }
 }

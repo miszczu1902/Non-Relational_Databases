@@ -51,19 +51,9 @@ public class RoomRepositoryTest extends BasicModelTest {
     }
 
     @Test
-    public void testGetAll() {
-        int oldSize = repository.getAll().size();
-        room = randomRoom();
-
-        repository.add(room);
-        assertEquals(oldSize + 1, repository.getAll().size());
-    }
-
-    @Test
     public void testClear() {
-        room = randomRoom();
         repository.clear();
 
-        assertTrue(repository.getAll().isEmpty());
+        assertEquals(0, repository.size());
     }
 }

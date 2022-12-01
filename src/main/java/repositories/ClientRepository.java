@@ -17,8 +17,6 @@ public class ClientRepository extends ClientMongoRepository {
     private Jsonb jsonb = JsonbBuilder.create();
     private ClientMongoRepository mongoRepository = new ClientMongoRepository();
 
-    private final String prefix = "client_";
-
     public ClientRepository() {
         super();
     }
@@ -27,7 +25,7 @@ public class ClientRepository extends ClientMongoRepository {
     public Client get(Object element) {
         try {
             Client client = (Client) element;
-            return Optional.ofNullable(pool.jsonGet(prefix + client.getPersonalID(), Client.class))
+            return Optional.ofNullable(pool.jsonGet(clientPrefix + client.getPersonalID(), Client.class))
                     .orElseThrow();
         } catch (JedisDataException e) {
             throw new JedisDataException("Redis operation failed", e);
@@ -40,7 +38,7 @@ public class ClientRepository extends ClientMongoRepository {
     public void add(Client... elements) {
         try {
             Arrays.stream(elements).forEach(client ->
-                    pool.jsonSet(prefix + client.getPersonalID(), jsonb.toJson(client)));
+                    pool.jsonSet(clientPrefix + client.getPersonalID(), jsonb.toJson(client)));
             mongoRepository.add(elements);
         } catch (JedisDataException e) {
             throw new JedisDataException("Redis operation failed", e);
@@ -53,7 +51,7 @@ public class ClientRepository extends ClientMongoRepository {
     public void remove(Client... elements) {
         try {
             Arrays.stream(elements).forEach(client ->
-                    pool.jsonDel(prefix + client.getPersonalID()));
+                    pool.jsonDel(clientPrefix + client.getPersonalID()));
             mongoRepository.remove(elements);
         } catch (JedisDataException e) {
             throw new JedisDataException("Redis operation failed", e);
@@ -66,7 +64,7 @@ public class ClientRepository extends ClientMongoRepository {
     public void update(Client... elements) {
         try {
             Arrays.stream(elements).forEach(client ->
-                    pool.jsonSet(prefix + client.getPersonalID(), jsonb.toJson(client)));
+                    pool.jsonSet(clientPrefix + client.getPersonalID(), jsonb.toJson(client)));
             mongoRepository.update(elements);
         } catch (JedisDataException e) {
             throw new JedisDataException("Redis operation failed", e);
@@ -88,21 +86,22 @@ public class ClientRepository extends ClientMongoRepository {
     @Override
     public List<Client> getAll() {
         try {
-            Schema schema = new Schema().addTextField("$.personalID", 1.0);
-            IndexDefinition rule = new IndexDefinition(IndexDefinition.Type.JSON)
-                    .setPrefixes(prefix);
-            pool.ftCreate("client-search", IndexOptions.defaultOptions().setDefinition(rule), schema);
+            SearchResult searchResult = pool.ftSearch("client-search", new Query());
 
-            SearchResult searchResult = pool.ftSearch("client-search",
-                    new Query());
             return searchResult.getDocuments().stream()
                     .map(document -> pool.jsonGet(document.getId(), Client.class))
                     .collect(Collectors.toList());
         } catch (JedisDataException e) {
+            e.printStackTrace();
             throw new JedisDataException("Redis operation failed", e);
         } catch (JedisException e) {
             return mongoRepository.getAll();
         }
+    }
+
+    @Override
+    public Long size() {
+        return pool.dbSize();
     }
 
     public void clear() {

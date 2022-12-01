@@ -56,4 +56,9 @@ public class ClientMongoRepository extends AbstractMongoRepository implements Re
     public List<Client> getAll() {
         return collection.find().into(new ArrayList<>());
     }
+
+    @Override
+    public Long size() {
+        return collection.countDocuments();
+    }
 }

@@ -57,4 +57,9 @@ public class RoomMongoRepository extends AbstractMongoRepository implements Repo
     public List<Room> getAll() {
         return collection.find().into(new ArrayList<>());
     }
+
+    @Override
+    public Long size() {
+        return collection.countDocuments();
+    }
 }
