@@ -116,6 +116,6 @@ public class ClientRepository extends AbstractRedisConnector implements Reposito
 
     @Override
     public void close() throws Exception {
-        pool.getPool().close();
+        pool.close();
     }
 }

@@ -5,7 +5,6 @@ import jakarta.json.bind.JsonbBuilder;
 import model.Room;
 import redis.AbstractRedisConnector;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.jedis.exceptions.JedisException;
 import redis.clients.jedis.search.*;

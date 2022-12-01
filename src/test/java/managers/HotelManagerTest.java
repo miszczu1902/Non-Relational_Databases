@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HotelManagerTest extends BasicManagerTest {
 
-    private final HotelManager hotelManager = new HotelManager();
+    private static final HotelManager hotelManager = new HotelManager();
 
     @Test
     public void addClientTest() throws ClientException {
