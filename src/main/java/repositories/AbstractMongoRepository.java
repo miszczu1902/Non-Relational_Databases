@@ -13,13 +13,16 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 public abstract class AbstractMongoRepository {
-
-    protected ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
-    protected MongoCredential credential = MongoCredential.createCredential("admin", "admin",
-            "adminpassword".toCharArray());
+    protected ConnectionString connectionString;
+    protected MongoCredential credential;
+    protected Properties properties = new Properties();
     protected CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder()
             .automatic(true)
             .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
@@ -43,6 +46,16 @@ public abstract class AbstractMongoRepository {
     }
 
     public AbstractMongoRepository() {
+        try {
+            this.properties.load(new FileInputStream(
+                    new File("src/main/resources/credentials.properties").getAbsoluteFile()));
+            this.connectionString = new ConnectionString("mongodb://" + this.properties.getProperty("mongoHostname") +
+                    ":" + this.properties.getProperty("mongoPort"));
+            this.credential = MongoCredential.createCredential(this.properties.getProperty("mongoUsername"),
+                    this.properties.getProperty("mongoDatabase"), this.properties.getProperty("mongoPassword").toCharArray());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.initDbConnection();
         this.hotelDB = mongoClient.getDatabase("hotel");
     }

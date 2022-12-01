@@ -7,29 +7,29 @@ import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.jedis.search.IndexDefinition;
 import redis.clients.jedis.search.IndexOptions;
 import redis.clients.jedis.search.Schema;
+import repositories.AbstractMongoRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 
-public abstract class AbstractRedisConnector implements AutoCloseable {
+public abstract class AbstractRedisConnector extends AbstractMongoRepository implements AutoCloseable {
 
     protected static JedisPooled pool;
-    protected Properties properties = new Properties();
     protected String clientPrefix = "client_";
     protected String roomPrefix = "room_";
 
     public AbstractRedisConnector() {
-        this.initDbConnection();
+        super();
+        this.initRedisDbConnection();
     }
 
-    public void initDbConnection() {
+    public void initRedisDbConnection() {
         try {
-            properties.load(new FileInputStream(
+            this.properties.load(new FileInputStream(
                     new File("src/main/resources/credentials.properties").getAbsoluteFile()));
             pool = new JedisPooled(new HostAndPort(
-                    properties.getProperty("redisHostname"), Integer.parseInt(properties.getProperty("redisPort"))),
+                    this.properties.getProperty("redisHostname"), Integer.parseInt(this.properties.getProperty("redisPort"))),
                     DefaultJedisClientConfig.builder().build());
 
             try {
