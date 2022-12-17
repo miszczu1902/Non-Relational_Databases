@@ -1,6 +1,7 @@
 package repositories;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import dao.ClientDao;
 import dao.ReservationDao;
 import dao.RoomDao;
@@ -22,6 +23,11 @@ public class CassandraRepository implements ClientDao, RoomDao, ReservationDao {
     }
 
     @Override
+    public Client readClient(ResultSet resultSet) {
+        return null;
+    }
+
+    @Override
     public void updateClient(Client client) {
 
     }
@@ -34,6 +40,11 @@ public class CassandraRepository implements ClientDao, RoomDao, ReservationDao {
     @Override
     public void createReservation(Reservation reservation) {
 
+    }
+
+    @Override
+    public Reservation readReservation(ResultSet resultSet) {
+        return null;
     }
 
     @Override

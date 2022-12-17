@@ -6,6 +6,5 @@ public class Main {
     public static void main(String[] args) {
         CqlSession session = new CassandraClient().getSession();
         HotelManager hotelManager = new HotelManager(session);
-
     }
 }

@@ -1,5 +1,6 @@
 package dao;
 
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.mapper.annotations.*;
 import model.Client;
 //import queryProviders.ClientQueryProvider;
@@ -11,7 +12,8 @@ public interface ClientDao {
     void createClient(Client client);
 
 //    @QueryProvider(providerClass = ClientQueryProvider.class, entityHelpers = {Client.class})
-//    Client read(String personalID);
+    @GetEntity
+    Client readClient(ResultSet resultSet);
 
     @Update
     void updateClient(Client client);
