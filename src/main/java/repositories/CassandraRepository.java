@@ -63,6 +63,11 @@ public class CassandraRepository implements ClientDao, RoomDao, ReservationDao {
     }
 
     @Override
+    public Room readRoom(ResultSet resultSet) {
+        return null;
+    }
+
+    @Override
     public void updateRoom(Room room) {
 
     }
