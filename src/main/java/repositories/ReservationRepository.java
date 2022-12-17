@@ -1,12 +1,17 @@
 package repositories;
 
-import lombok.AllArgsConstructor;
+import com.datastax.oss.driver.api.core.CqlSession;
 import model.Reservation;
 
 import java.util.List;
 
-@AllArgsConstructor
-public class ReservationRepository implements Repository<Reservation> {
+public class ReservationRepository extends CassandraRepository
+        implements Repository<Reservation> {
+
+    public ReservationRepository(CqlSession session) {
+        super(session);
+    }
+
     @Override
     public Reservation get(Object element) {
         return null;

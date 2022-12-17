@@ -1,12 +1,15 @@
 package repositories;
 
-import lombok.AllArgsConstructor;
+import com.datastax.oss.driver.api.core.CqlSession;
 import model.Client;
 
 import java.util.List;
 
-@AllArgsConstructor
-public class ClientRepository implements Repository<Client> {
+public class ClientRepository extends CassandraRepository implements Repository<Client> {
+
+    public ClientRepository(CqlSession session) {
+        super(session);
+    }
 
     @Override
     public Client get(Object element) {
