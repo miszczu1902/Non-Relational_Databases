@@ -72,9 +72,6 @@ public class HotelManager {
                 .withColumn(CqlIdentifier.fromCql("lastName"), DataTypes.TEXT)
                 .withColumn(CqlIdentifier.fromCql("address_id"), DataTypes.UUID)
                 .withColumn(CqlIdentifier.fromCql("clientType"), DataTypes.TEXT)
-//                .withColumn(CqlIdentifier.fromCql("clientType"), DataTypes.TEXT)
-//                .withClusteringOrder(CqlIdentifier.fromCql("address"), ClusteringOrder.ASC)
-//                .withClusteringOrder(CqlIdentifier.fromCql("clientType"), ClusteringOrder.ASC)
                 .build();
         session.execute(createClients);
 
@@ -145,17 +142,17 @@ public class HotelManager {
 
     public void removeClientFormHotel(String personalId) {
         try {
-            clientRepository.remove(clientRepository.get(new Client(personalId)));
+            clientRepository.remove(clientRepository.get(personalId));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addRoom(Integer roomNumber, Integer capacity, Double price,
-                        EquipmentType equipmentType) throws RoomException {
+    public void addRoom(Integer roomNumber, Integer capacity, Double price, EquipmentType equipmentType)
+            throws RoomException {
         try {
-            roomRepository.get(new Room(roomNumber));
+            roomRepository.get(roomNumber);
             throw new RoomException("Room with a given number exist");
 
         } catch (NoSuchElementException e) {
@@ -178,7 +175,7 @@ public class HotelManager {
             if (checkIfRoomCantBeReserved(roomNumber, LocalDateTime.now())) {
                 throw new RoomException("A given room couldn't be removed because it's reserved");
             }
-            Room room = roomRepository.get(new Room(roomNumber));
+            Room room = roomRepository.get(roomNumber);
             roomRepository.remove(room);
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,7 +184,7 @@ public class HotelManager {
 
     public void updateRoomEquipment(int roomNumber, EquipmentType equipment) {
         try {
-            Room room = roomRepository.get(new Room(roomNumber));
+            Room room = roomRepository.get(roomNumber);
             room.setEquipmentType(equipment);
             roomRepository.update(room);
         } catch (Exception e) {
@@ -236,7 +233,7 @@ public class HotelManager {
 
     public Reservation aboutReservation(UUID reservationId) throws ReservationException {
         try {
-            return reservationRepository.get(new Reservation(reservationId));
+            return reservationRepository.get(reservationId);
         } catch (NoSuchElementException e) {
             throw new ReservationException("Any reservation for a given condition doesn't exist");
         }
