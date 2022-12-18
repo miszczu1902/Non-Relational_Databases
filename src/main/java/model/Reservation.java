@@ -7,7 +7,7 @@ import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -30,22 +30,18 @@ public class Reservation implements Serializable {
 
     @NonNull
     @CqlName("beginTime")
-    private LocalDateTime beginTime;
+    private LocalDate beginTime;
 
     @NonNull
     @CqlName("endTime")
-    private LocalDateTime endTime;
+    private LocalDate endTime;
 
     @NonNull
-    @CqlName("client_id")
+    @CqlName("clientId")
     private String clientId;
 
     @CqlName("reservationCost")
     private double reservationCost;
-
-    public Reservation(UUID id) {
-        this.id = id;
-    }
 
     public int getRentDays() {
         return endTime.getDayOfYear() - beginTime.getDayOfYear();

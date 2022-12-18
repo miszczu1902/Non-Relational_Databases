@@ -17,7 +17,7 @@ import org.apache.commons.math3.util.Precision;
 import repositories.*;
 
 import java.net.InetSocketAddress;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -72,6 +72,7 @@ public class HotelManager {
                 .withColumn(CqlIdentifier.fromCql("lastName"), DataTypes.TEXT)
                 .withColumn(CqlIdentifier.fromCql("address_id"), DataTypes.UUID)
                 .withColumn(CqlIdentifier.fromCql("clientType"), DataTypes.TEXT)
+                .withColumn(CqlIdentifier.fromCql("discount"), DataTypes.DOUBLE)
                 .build();
         session.execute(createClients);
 
@@ -80,15 +81,15 @@ public class HotelManager {
                 .withPartitionKey(CqlIdentifier.fromCql("roomNumber"), DataTypes.INT)
                 .withColumn(CqlIdentifier.fromCql("capacity"), DataTypes.INT)
                 .withColumn(CqlIdentifier.fromCql("price"), DataTypes.DOUBLE)
-                .withClusteringColumn(CqlIdentifier.fromCql("equipmentType"), DataTypes.TEXT)
-                .withClusteringOrder(CqlIdentifier.fromCql("equipmentType"), ClusteringOrder.ASC)
+                .withClusteringColumn(CqlIdentifier.fromCql("equipmentTypeId"), DataTypes.UUID)
+                .withClusteringOrder(CqlIdentifier.fromCql("equipmentTypeId"), ClusteringOrder.ASC)
                 .build();
         session.execute(createRooms);
 
         SimpleStatement createEquipmentTypes = SchemaBuilder.createTable(EQUIPMENTS_ID)
                 .ifNotExists()
-                .withPartitionKey(CqlIdentifier.fromCql("id"), DataTypes.UUID)
-                .withColumn(CqlIdentifier.fromCql("equipmentDescription"), DataTypes.TEXT)
+                .withPartitionKey(CqlIdentifier.fromCql("eq_id"), DataTypes.UUID)
+                .withColumn(CqlIdentifier.fromCql("eq_description"), DataTypes.TEXT)
                 .withColumn(CqlIdentifier.fromCql("kettle"), DataTypes.BOOLEAN)
                 .withColumn(CqlIdentifier.fromCql("microwave"), DataTypes.BOOLEAN)
                 .withColumn(CqlIdentifier.fromCql("balcony"), DataTypes.BOOLEAN)
@@ -102,8 +103,8 @@ public class HotelManager {
                 .ifNotExists()
                 .withPartitionKey(CqlIdentifier.fromCql("id"), DataTypes.UUID)
                 .withColumn(CqlIdentifier.fromCql("roomNumber"), DataTypes.INT)
-                .withColumn(CqlIdentifier.fromCql("beginTime"), DataTypes.TIMESTAMP)
-                .withColumn(CqlIdentifier.fromCql("endTime"), DataTypes.TIMESTAMP)
+                .withColumn(CqlIdentifier.fromCql("beginTime"), DataTypes.DATE)
+                .withColumn(CqlIdentifier.fromCql("endTime"), DataTypes.DATE)
                 .withColumn(CqlIdentifier.fromCql("clientId"), DataTypes.TEXT)
                 .withColumn(CqlIdentifier.fromCql("reservationCost"), DataTypes.DOUBLE)
                 .build();
@@ -111,7 +112,7 @@ public class HotelManager {
 
     }
 
-    private boolean checkIfRoomCantBeReserved(int roomNumber, LocalDateTime beginTime) {
+    private boolean checkIfRoomCantBeReserved(int roomNumber, LocalDate beginTime) {
         return !(reservationRepository.getAll().stream()
                 .filter(reservation -> reservation.getRoomNumber().equals(roomNumber)
                         && (beginTime.isBefore(reservation.getEndTime())
@@ -156,7 +157,7 @@ public class HotelManager {
             throw new RoomException("Room with a given number exist");
 
         } catch (NoSuchElementException e) {
-            roomRepository.add(new Room(roomNumber, capacity, price, equipmentType));
+            roomRepository.add(new Room(roomNumber, capacity, price, equipmentType.getId()));
         } catch (RoomException roomException) {
             throw new RoomException(roomException.getMessage());
         }
@@ -172,7 +173,7 @@ public class HotelManager {
 
     public void removeRoom(Integer roomNumber) {
         try {
-            if (checkIfRoomCantBeReserved(roomNumber, LocalDateTime.now())) {
+            if (checkIfRoomCantBeReserved(roomNumber, LocalDate.now())) {
                 throw new RoomException("A given room couldn't be removed because it's reserved");
             }
             Room room = roomRepository.get(roomNumber);
@@ -185,14 +186,14 @@ public class HotelManager {
     public void updateRoomEquipment(int roomNumber, EquipmentType equipment) {
         try {
             Room room = roomRepository.get(roomNumber);
-            room.setEquipmentType(equipment);
+            room.setEquipmentTypeId(equipment.getId());
             roomRepository.update(room);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public UUID reserveRoom(Integer roomNumber, LocalDateTime beginTime, LocalDateTime endTime,
+    public UUID reserveRoom(Integer roomNumber, LocalDate beginTime, LocalDate endTime,
                             String personalId) throws LogicException {
         try {
             Room room = roomRepository.get(roomNumber);
@@ -203,8 +204,8 @@ public class HotelManager {
                 throw new ReservationException(
                         "Start time of reservation should be before end time reservation");
 
-            } else if (beginTime.isBefore(LocalDateTime.now()) ||
-                    endTime.isBefore(LocalDateTime.now())) {
+            } else if (beginTime.isBefore(LocalDate.now()) ||
+                    endTime.isBefore(LocalDate.now())) {
                 throw new ReservationException(
                         "Reservation cannot be before current date");
 
@@ -214,11 +215,11 @@ public class HotelManager {
             } else {
                 Reservation newReservation =
                         new Reservation(UUID.randomUUID(), roomNumber, beginTime, endTime, personalId, 0);
-                newReservation.setReservationCost(Precision.round(client.getClientType()
-                        .applyDiscount(newReservation.getRentDays() * room.getPrice()), 2));
+                newReservation.setReservationCost(Precision.round(client.getDiscount()
+                        * (newReservation.getRentDays() * room.getPrice()), 2));
 
-                if (newReservation.getReservationCost() >= 1000 && client.getClientType().equals(ClientType.STANDARD)) {
-                    client.setClientType(ClientType.PREMIUM);
+                if (newReservation.getReservationCost() >= 1000 && client.getClientType().equals(ClientType.STANDARD.getTypeInfo())) {
+                    client.setClientType(ClientType.PREMIUM.getTypeInfo());
                 }
 
                 reservationRepository.add(newReservation);

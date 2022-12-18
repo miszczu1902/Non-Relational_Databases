@@ -43,9 +43,8 @@ public class Client implements Serializable {
     private UUID addressId;
 
     @CqlName("clientType")
-    private ClientType clientType = ClientType.STANDARD;
+    private String clientType = ClientType.STANDARD.getTypeInfo();
 
-    public Client(@NonNull String personalID) {
-        this.personalID = personalID;
-    }
+    @CqlName("discount")
+    private Double discount = ClientType.STANDARD.getDiscount();
 }

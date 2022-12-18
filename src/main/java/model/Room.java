@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
@@ -36,9 +37,9 @@ public class Room implements Serializable {
     private Double price;
 
     @NonNull
-    @CqlName("equipmentType")
+    @CqlName("equipmentTypeId")
     @ClusteringColumn
-    private EquipmentType equipmentType;
+    private UUID equipmentTypeId;
 
     public Room(@NonNull Integer roomNumber) {
         this.roomNumber = roomNumber;

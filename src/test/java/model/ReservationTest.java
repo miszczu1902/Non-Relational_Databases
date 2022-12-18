@@ -2,7 +2,7 @@ package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -22,7 +22,7 @@ class ReservationTest extends BasicModelTest {
     public static void initialize() {
         Address address = new Address(UUID.randomUUID(), randomString(), randomString(), randomString());
         client = new Client(randomString(), randomString(), randomString(), address.getId());
-        room = new Room(randomInt(), randomInt(), randomDouble(), getEquipmentTypes().get(0));
+        room = new Room(randomInt(), randomInt(), randomDouble(), getEquipmentTypes().get(0).getId());
 
         reservation = new Reservation();
     }
@@ -36,13 +36,13 @@ class ReservationTest extends BasicModelTest {
 
     @Test
     void testEquals() {
-        reservation = new Reservation(room.getRoomNumber(), LocalDateTime.now(),
-                LocalDateTime.now().plusDays(RandomUtils.nextInt()), client.getPersonalID());
+        reservation = new Reservation(room.getRoomNumber(), LocalDate.now(),
+                LocalDate.now().plusDays(RandomUtils.nextInt()), client.getPersonalID());
         Reservation clonedReservation = SerializationUtils.clone(reservation);
         assertEquals(reservation, clonedReservation);
 
 
-        clonedReservation.setEndTime(LocalDateTime.now());
+        clonedReservation.setEndTime(LocalDate.now());
         assertEquals(reservation, clonedReservation);
 
         clonedReservation.setId(UUID.randomUUID());
@@ -51,8 +51,8 @@ class ReservationTest extends BasicModelTest {
 
     @Test
     void testRentDays() {
-        LocalDateTime beginTime = LocalDateTime.now();
-        LocalDateTime endTime = beginTime.plusDays(randomInt());
+        LocalDate beginTime = LocalDate.now();
+        LocalDate endTime = beginTime.plusDays(randomInt());
         reservation.setBeginTime(beginTime);
         reservation.setEndTime(endTime);
 
