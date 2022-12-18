@@ -25,7 +25,7 @@ public class ClientRepository extends CassandraRepository implements Repository<
                 .selectFrom(CassandraNamespaces.CLIENT_ID)
                 .all()
                 .where(Relation.column("personalID").isEqualTo(literal(element.toString())));
-        return Optional.ofNullable(readClient(SESSION.execute(getClientByPersonalID.build())))
+        return Optional.ofNullable(readClient(session.execute(getClientByPersonalID.build())))
                 .orElseThrow();
     }
 

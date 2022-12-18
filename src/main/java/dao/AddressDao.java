@@ -17,5 +17,5 @@ public interface AddressDao {
     void updateAddress(Address address);
 
     @Delete
-    void deleteClient(Address address);
+    void deleteAddress(Address address);
 }

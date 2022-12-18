@@ -12,9 +12,9 @@ import java.util.UUID;
 public class Main {
     public static void main(String[] args) throws ClientException, RoomException {
         HotelManager hotelManager = new HotelManager();
-        Client client = new Client("personalID1", "Jan", "Kowalski", UUID.randomUUID());
+//        Client client = new Client("personalID1", "Jan", "Kowalski", UUID.randomUUID());
 
-        hotelManager.addClientToHotel(client);
+//        hotelManager.addClientToHotel(client);
 //        Room room = new Room(1, 2, 30.0, new Extended());
 
 //        hotelManager.addClientToHotel(client);

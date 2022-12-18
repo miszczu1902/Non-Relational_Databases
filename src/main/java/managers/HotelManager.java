@@ -41,11 +41,11 @@ public class HotelManager {
 
     public void initSession() {
         session = CqlSession.builder()
-                .addContactPoint(new InetSocketAddress("172.24.0.2", 9042))
-//                .addContactPoint(new InetSocketAddress("172.24.0.3", 9043))
+//                .addContactPoint(new InetSocketAddress("172.24.0.2", 9042))
+                .addContactPoint(new InetSocketAddress("localhost", 9042))
+                .addContactPoint(new InetSocketAddress("localhost", 9043))
                 .withLocalDatacenter("dc1")
                 .withAuthCredentials("cassandra", "cassandra")
-//                .withLocalDatacenter("cassandra-cluster")
                 .withKeyspace(CqlIdentifier.fromCql("hotel"))
                 .build();
 

@@ -18,8 +18,8 @@ public class HotelAddressTranslator implements AddressTranslator {
         String hostname = inetSocketAddress.getHostName();
 
         return switch (hostAddress) {
-            case "172.24.0.2" -> new InetSocketAddress("cassandra1", 9042);
-            case "172.24.0.3" -> new InetSocketAddress("cassandra2", 9043);
+            case "172.24.0.2" -> new InetSocketAddress("localhost", 9042);
+            case "172.24.0.3" -> new InetSocketAddress("localhost", 9043);
             default -> throw new RuntimeException("Wrong address");
         };
     }
