@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import model.equipmentType.Basic;
+import model.equipmentType.Deluxe;
+import model.equipmentType.Extended;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.math3.util.Precision;

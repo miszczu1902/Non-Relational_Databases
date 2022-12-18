@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import lombok.*;
-import org.apache.commons.math3.util.Precision;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,17 +15,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"beginTime", "endTime", "client", "reservationCost"})
-@Entity
-@CqlName("reservation")
+@EqualsAndHashCode(exclude = {"beginTime", "endTime", "clientId", "reservationCost", "roomNumber"})
+@Entity(defaultKeyspace = "hotel")
+@CqlName("res_by_client")
 public class Reservation implements Serializable {
 
     @CqlName("id")
+    @PartitionKey
     private UUID id;
 
     @NonNull
-    @CqlName("room")
-    private Room room;
+    @CqlName("roomNumber")
+    private Integer roomNumber;
 
     @NonNull
     @CqlName("beginTime")
@@ -36,8 +37,8 @@ public class Reservation implements Serializable {
     private LocalDateTime endTime;
 
     @NonNull
-    @CqlName("client")
-    private Client client;
+    @CqlName("client_id")
+    private String clientId;
 
     @CqlName("reservationCost")
     private double reservationCost;
@@ -48,10 +49,5 @@ public class Reservation implements Serializable {
 
     public int getRentDays() {
         return endTime.getDayOfYear() - beginTime.getDayOfYear();
-    }
-
-    public void calculateReservationCost() {
-        reservationCost = Precision.round(client.getClientType()
-                .applyDiscount(getRentDays() * room.getPrice()), 2);
     }
 }

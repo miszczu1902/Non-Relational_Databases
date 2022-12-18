@@ -1,7 +1,11 @@
 package model;
 
 import java.io.Serializable;
+import java.util.UUID;
 
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,16 +16,24 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
+@Entity(defaultKeyspace = "hotel")
+@CqlName("addresses_id")
 public class Address implements Serializable {
 
-    private Long id;
+    @NonNull
+    @PartitionKey
+    @CqlName("address_id")
+    private UUID id;
 
     @NonNull
+    @CqlName("city")
     private String city;
 
     @NonNull
+    @CqlName("street")
     private String street;
 
     @NonNull
+    @CqlName("number")
     private String number;
 }

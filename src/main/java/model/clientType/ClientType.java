@@ -1,7 +1,8 @@
-package model;
+package model.clientType;
 
 import java.io.Serializable;
 
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,9 +19,12 @@ public enum ClientType implements Serializable {
 
     @NonNull
     @Getter
+    @CqlName("typeInfo")
     private String typeInfo;
+
     @NonNull
     @Getter
+    @CqlName("discount")
     private Double discount;
 
     public double applyDiscount(double price) {

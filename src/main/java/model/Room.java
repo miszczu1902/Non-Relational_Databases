@@ -18,7 +18,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"capacity", "price", "equipmentType"})
-@CqlName("room")
+@CqlName("rooms_id")
 @Entity
 public class Room implements Serializable {
 

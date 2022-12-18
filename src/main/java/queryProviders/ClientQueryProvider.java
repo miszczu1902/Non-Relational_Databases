@@ -1,6 +1,6 @@
 //package queryProviders;
 //
-//import cassandra.CassandraClient;
+//import cassandra.CassandraNamespaces;
 //import com.datastax.oss.driver.api.core.CqlSession;
 //import com.datastax.oss.driver.api.core.cql.ResultSet;
 //import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
@@ -13,15 +13,13 @@
 //
 //public class ClientQueryProvider {
 //
-//    private CqlSession session;
-//
 //    public ClientQueryProvider(CqlSession session) {
 //        this.session = session;
 //    }
 //
 //    public Client read(String personalID) {
 //        Select getClientByPersonalID = QueryBuilder
-//                .selectFrom(CassandraClient.CLIENT_ID)
+//                .selectFrom(CassandraNamespaces.CLIENT_ID)
 //                .all()
 //                .where(Relation.column("personalID").isEqualTo(literal(personalID)));
 //        ResultSet resultSet = session.execute(getClientByPersonalID.build());
