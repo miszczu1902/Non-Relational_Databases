@@ -41,7 +41,6 @@ public class HotelManager {
 
     public void initSession() {
         session = CqlSession.builder()
-//                .addContactPoint(new InetSocketAddress("172.24.0.2", 9042))
                 .addContactPoint(new InetSocketAddress("localhost", 9042))
                 .addContactPoint(new InetSocketAddress("localhost", 9043))
                 .withLocalDatacenter("dc1")
@@ -56,57 +55,56 @@ public class HotelManager {
         SimpleStatement createKeyspace = keyspace.build();
         session.execute(createKeyspace);
 
-        SimpleStatement createAddresses = SchemaBuilder.createTable(ADDRESS_ID)
+        SimpleStatement createAddresses = SchemaBuilder.createTable(ADDRESSES_ID)
                 .ifNotExists()
-                .withPartitionKey(CqlIdentifier.fromCql("address_id"), DataTypes.UUID)
-                .withColumn(CqlIdentifier.fromCql("city"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("street"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("number"), DataTypes.TEXT)
+                .withPartitionKey(ADDRESS_ID, DataTypes.UUID)
+                .withColumn(CITY, DataTypes.TEXT)
+                .withColumn(STREET, DataTypes.TEXT)
+                .withColumn(NUMBER, DataTypes.TEXT)
                 .build();
         session.execute(createAddresses);
 
         SimpleStatement createClients = SchemaBuilder.createTable(CLIENT_ID)
                 .ifNotExists()
-                .withPartitionKey(CqlIdentifier.fromCql("personalID"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("firstName"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("lastName"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("address_id"), DataTypes.UUID)
-                .withColumn(CqlIdentifier.fromCql("clientType"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("discount"), DataTypes.DOUBLE)
+                .withPartitionKey(PERSONAL_ID, DataTypes.TEXT)
+                .withColumn(FIRST_NAME, DataTypes.TEXT)
+                .withColumn(LAST_NAME, DataTypes.TEXT)
+                .withColumn(ADDRESS_ID, DataTypes.UUID)
+                .withColumn(CLIENT_TYPE, DataTypes.TEXT)
+                .withColumn(DISCOUNT, DataTypes.DOUBLE)
                 .build();
         session.execute(createClients);
 
-        SimpleStatement createRooms = SchemaBuilder.createTable(ROOM_ID)
+        SimpleStatement createRooms = SchemaBuilder.createTable(ROOMS_ID)
                 .ifNotExists()
-                .withPartitionKey(CqlIdentifier.fromCql("roomNumber"), DataTypes.INT)
-                .withColumn(CqlIdentifier.fromCql("capacity"), DataTypes.INT)
-                .withColumn(CqlIdentifier.fromCql("price"), DataTypes.DOUBLE)
-                .withClusteringColumn(CqlIdentifier.fromCql("equipmentTypeId"), DataTypes.UUID)
-                .withClusteringOrder(CqlIdentifier.fromCql("equipmentTypeId"), ClusteringOrder.ASC)
+                .withPartitionKey(ROOM_NUMBER, DataTypes.INT)
+                .withColumn(CAPACITY, DataTypes.INT)
+                .withColumn(PRICE, DataTypes.DOUBLE)
+                .withClusteringColumn(EQUIPMENT_TYPE_ID, DataTypes.UUID)
+                .withClusteringOrder(EQUIPMENT_TYPE_ID, ClusteringOrder.ASC)
                 .build();
         session.execute(createRooms);
 
-        SimpleStatement createEquipmentTypes = SchemaBuilder.createTable(EQUIPMENTS_ID)
+        SimpleStatement createEquipmentTypes = SchemaBuilder.createTable(EQUIPMENT_TYPES)
                 .ifNotExists()
-                .withPartitionKey(CqlIdentifier.fromCql("eq_id"), DataTypes.UUID)
-                .withColumn(CqlIdentifier.fromCql("eq_description"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("kettle"), DataTypes.BOOLEAN)
-                .withColumn(CqlIdentifier.fromCql("microwave"), DataTypes.BOOLEAN)
-                .withColumn(CqlIdentifier.fromCql("balcony"), DataTypes.BOOLEAN)
-                .withColumn(CqlIdentifier.fromCql("tv"), DataTypes.BOOLEAN)
-                .withColumn(CqlIdentifier.fromCql("tv"), DataTypes.BOOLEAN)
-                .withColumn(CqlIdentifier.fromCql("airConditioning"), DataTypes.BOOLEAN)
+                .withPartitionKey(EQ_ID, DataTypes.UUID)
+                .withColumn(EQ_DESCRIPTION, DataTypes.TEXT)
+                .withColumn(KETTLE, DataTypes.BOOLEAN)
+                .withColumn(MICROWAVE, DataTypes.BOOLEAN)
+                .withColumn(BALCONY, DataTypes.BOOLEAN)
+                .withColumn(TV, DataTypes.BOOLEAN)
+                .withColumn(AIR_CONDITIONING, DataTypes.BOOLEAN)
                 .build();
         session.execute(createEquipmentTypes);
 
         SimpleStatement createReservations = SchemaBuilder.createTable(RESERVATIONS_BY_CLIENT)
                 .ifNotExists()
-                .withPartitionKey(CqlIdentifier.fromCql("id"), DataTypes.UUID)
-                .withColumn(CqlIdentifier.fromCql("roomNumber"), DataTypes.INT)
-                .withColumn(CqlIdentifier.fromCql("beginTime"), DataTypes.DATE)
-                .withColumn(CqlIdentifier.fromCql("endTime"), DataTypes.DATE)
-                .withColumn(CqlIdentifier.fromCql("clientId"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("reservationCost"), DataTypes.DOUBLE)
+                .withPartitionKey(RESERVATION_ID, DataTypes.UUID)
+                .withColumn(ROOM_NUMBER, DataTypes.INT)
+                .withColumn(BEGIN_TIME, DataTypes.DATE)
+                .withColumn(END_TIME, DataTypes.DATE)
+                .withColumn(RES_CLIENT_ID, DataTypes.TEXT)
+                .withColumn(RESERVATION_COST, DataTypes.DOUBLE)
                 .build();
         session.execute(createReservations);
 
@@ -165,7 +163,7 @@ public class HotelManager {
 
     public Room aboutRoom(Integer roomNumber) throws RoomException {
         try {
-            return roomRepository.get(new Room(roomNumber));
+            return roomRepository.get(roomNumber);
         } catch (NoSuchElementException e) {
             throw new RoomException("Room with a given number doesn't exist");
         }

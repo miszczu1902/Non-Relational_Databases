@@ -9,6 +9,7 @@ import model.Client;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
@@ -46,11 +47,28 @@ public class ClientRepository extends CassandraRepository implements Repository<
 
     @Override
     public List<Client> find(Object... elements) {
-        return null;
+        Select getClientsByPersonalID = QueryBuilder
+                .selectFrom(CassandraNamespaces.CLIENT_ID)
+                .all();
+        Stream.of(elements).forEach(element ->
+                getClientsByPersonalID.where(Relation.column("personalID")
+                        .isEqualTo(literal(element.toString()))));
+
+        return session.execute(getClientsByPersonalID.build()).all()
+                .stream()
+                .map(element -> (Client) element)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Client> getAll() {
-        return null;
+        Select getClientsByPersonalID = QueryBuilder
+                .selectFrom(CassandraNamespaces.CLIENT_ID)
+                .all();
+
+        return session.execute(getClientsByPersonalID.build()).all()
+                .stream()
+                .map(element -> (Client) element)
+                .collect(Collectors.toList());
     }
 }
