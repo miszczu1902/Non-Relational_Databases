@@ -7,7 +7,6 @@ import model.BasicModelTest;
 import model.Client;
 import model.clientType.ClientType;
 import org.apache.commons.lang3.SerializationUtils;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
@@ -23,14 +22,12 @@ public class ClientRepositoryTest extends BasicModelTest {
     private Address address;
     private Client client;
 
-    @Before
-    public void initToTest() {
-        address = new Address(UUID.randomUUID(), randomString(), randomString(), randomString());
-        client = new Client(randomString(), randomString(), randomString(), address.getAddressId());
-    }
 
     @Test
     public void testAddAndGet() {
+        address = new Address(UUID.randomUUID(), randomString(), randomString(), randomString());
+        client = new Client(randomString(), randomString(), randomString(), address.getAddressId());
+
         repository.add(address, client);
 
         assertEquals(client, repository.get(client.getPersonalID()));
@@ -38,6 +35,9 @@ public class ClientRepositoryTest extends BasicModelTest {
 
     @Test
     public void testUpdate() {
+        address = new Address(UUID.randomUUID(), randomString(), randomString(), randomString());
+        client = new Client(randomString(), randomString(), randomString(), address.getAddressId());
+
         repository.add(address, client);
 
         Client newClient = SerializationUtils.clone(client);
@@ -49,6 +49,9 @@ public class ClientRepositoryTest extends BasicModelTest {
 
     @Test
     public void testRemove() {
+        address = new Address(UUID.randomUUID(), randomString(), randomString(), randomString());
+        client = new Client(randomString(), randomString(), randomString(), address.getAddressId());
+
         repository.add(address, client);
         repository.remove(client);
 

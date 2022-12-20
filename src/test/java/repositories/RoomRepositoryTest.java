@@ -5,7 +5,6 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import model.*;
 import model.equipmentType.Extended;
 import org.apache.commons.lang3.SerializationUtils;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
@@ -21,15 +20,12 @@ public class RoomRepositoryTest extends BasicModelTest {
     private Room room;
     private EquipmentType equipmentType;
 
-    @Before
-    public void initToTest() {
+    @Test
+    public void testAddAndGet() {
         equipmentType = new Extended();
         equipmentType.setEqId(UUID.randomUUID());
         room = new Room(randomInt(), randomInt(), randomDouble(), equipmentType.getEqId());
-    }
 
-    @Test
-    public void testAddAndGet() {
         repository.add(equipmentType, room);
 
         assertEquals(room, repository.get(room.getRoomNumber()));
@@ -37,6 +33,10 @@ public class RoomRepositoryTest extends BasicModelTest {
 
     @Test
     public void testUpdate() {
+        equipmentType = new Extended();
+        equipmentType.setEqId(UUID.randomUUID());
+        room = new Room(randomInt(), randomInt(), randomDouble(), equipmentType.getEqId());
+
         repository.add(equipmentType, room);
 
         Room newRoom = SerializationUtils.clone(room);
@@ -48,6 +48,10 @@ public class RoomRepositoryTest extends BasicModelTest {
 
     @Test
     public void testRemove() {
+        equipmentType = new Extended();
+        equipmentType.setEqId(UUID.randomUUID());
+        room = new Room(randomInt(), randomInt(), randomDouble(), equipmentType.getEqId());
+
         repository.add(equipmentType, room);
         repository.remove(room);
 

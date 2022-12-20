@@ -16,10 +16,12 @@ import lombok.*;
 @CqlName("equipment_types")
 public class EquipmentType implements Serializable {
 
+    @NonNull
     @CqlName("eqId")
     @PartitionKey
     protected UUID eqId;
 
+    @NonNull
     @CqlName("eq_description")
     protected String equipmentDescription;
 
