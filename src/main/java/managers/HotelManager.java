@@ -27,20 +27,20 @@ import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createKeysp
 
 public class HotelManager {
 
-    private CqlSession session;
+    private static CqlSession SESSION;
     private ClientRepository clientRepository;
     private RoomRepository roomRepository;
     private ReservationRepository reservationRepository;
 
     public HotelManager() {
         initSession();
-        this.clientRepository = new ClientRepository(this.session);
-        this.roomRepository = new RoomRepository(this.session);
-        this.reservationRepository = new ReservationRepository(this.session);
+        this.clientRepository = new ClientRepository(SESSION);
+        this.roomRepository = new RoomRepository(SESSION);
+        this.reservationRepository = new ReservationRepository(SESSION);
     }
 
-    public void initSession() {
-        session = CqlSession.builder()
+    public static void initSession() {
+        SESSION = CqlSession.builder()
                 .addContactPoint(new InetSocketAddress("localhost", 9042))
                 .addContactPoint(new InetSocketAddress("localhost", 9043))
                 .withLocalDatacenter("dc1")
@@ -53,7 +53,7 @@ public class HotelManager {
                 .withSimpleStrategy(2)
                 .withDurableWrites(true);
         SimpleStatement createKeyspace = keyspace.build();
-        session.execute(createKeyspace);
+        SESSION.execute(createKeyspace);
 
         SimpleStatement createAddresses = SchemaBuilder.createTable(ADDRESSES_ID)
                 .ifNotExists()
@@ -62,7 +62,7 @@ public class HotelManager {
                 .withColumn(STREET, DataTypes.TEXT)
                 .withColumn(NUMBER, DataTypes.TEXT)
                 .build();
-        session.execute(createAddresses);
+        SESSION.execute(createAddresses);
 
         SimpleStatement createClients = SchemaBuilder.createTable(CLIENT_ID)
                 .ifNotExists()
@@ -73,7 +73,7 @@ public class HotelManager {
                 .withColumn(CLIENT_TYPE, DataTypes.TEXT)
                 .withColumn(DISCOUNT, DataTypes.DOUBLE)
                 .build();
-        session.execute(createClients);
+        SESSION.execute(createClients);
 
         SimpleStatement createRooms = SchemaBuilder.createTable(ROOMS_ID)
                 .ifNotExists()
@@ -83,7 +83,7 @@ public class HotelManager {
                 .withClusteringColumn(EQUIPMENT_TYPE_ID, DataTypes.UUID)
                 .withClusteringOrder(EQUIPMENT_TYPE_ID, ClusteringOrder.ASC)
                 .build();
-        session.execute(createRooms);
+        SESSION.execute(createRooms);
 
         SimpleStatement createEquipmentTypes = SchemaBuilder.createTable(EQUIPMENT_TYPES)
                 .ifNotExists()
@@ -95,7 +95,7 @@ public class HotelManager {
                 .withColumn(TV, DataTypes.BOOLEAN)
                 .withColumn(AIR_CONDITIONING, DataTypes.BOOLEAN)
                 .build();
-        session.execute(createEquipmentTypes);
+        SESSION.execute(createEquipmentTypes);
 
         SimpleStatement createReservations = SchemaBuilder.createTable(RESERVATIONS_BY_CLIENT)
                 .ifNotExists()
@@ -106,8 +106,12 @@ public class HotelManager {
                 .withColumn(RES_CLIENT_ID, DataTypes.TEXT)
                 .withColumn(RESERVATION_COST, DataTypes.DOUBLE)
                 .build();
-        session.execute(createReservations);
+        SESSION.execute(createReservations);
 
+    }
+
+    public static void closeSession() {
+        SESSION.close();
     }
 
     private boolean checkIfRoomCantBeReserved(int roomNumber, LocalDate beginTime) {

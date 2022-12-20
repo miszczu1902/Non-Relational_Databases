@@ -2,11 +2,12 @@ package repositories;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import dao.*;
 import mappers.*;
 import model.*;
 
-public abstract class CassandraRepository implements ClientDao, RoomDao, ReservationDao, AddressDao, EquipmentTypeDao {
+public abstract class CassandraRepository<T> implements ClientDao, RoomDao, ReservationDao, AddressDao, EquipmentTypeDao {
 
     protected CqlSession session;
     protected ClientMapper clientMapper;
@@ -133,4 +134,6 @@ public abstract class CassandraRepository implements ClientDao, RoomDao, Reserva
     public void deleteEquipmentType(EquipmentType equipmentType) {
         equipmentTypeDao.deleteEquipmentType(equipmentType);
     }
+
+    protected abstract T rowToEntity(Row row);
 }

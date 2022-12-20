@@ -1,8 +1,11 @@
 package dao;
 
 import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.mapper.annotations.*;
 import model.Reservation;
+
+import java.util.List;
 
 @Dao
 public interface ReservationDao {

@@ -1,6 +1,7 @@
 package repositories;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -8,17 +9,27 @@ import java.util.stream.Stream;
 import cassandra.CassandraNamespaces;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.relation.Relation;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
+import model.EquipmentType;
 import model.Room;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 
-public class RoomRepository extends CassandraRepository implements Repository<Room> {
+public class RoomRepository extends CassandraRepository<Room> implements Repository<Room> {
 
     public RoomRepository(CqlSession session) {
         super(session);
+    }
+
+    @Override
+    protected Room rowToEntity(Row row) {
+        return new Room(row.getInt(CassandraNamespaces.ROOM_NUMBER),
+                row.getInt(CassandraNamespaces.CAPACITY),
+                row.getDouble(CassandraNamespaces.PRICE),
+                Objects.requireNonNull(row.getUuid(CassandraNamespaces.EQUIPMENT_TYPE_ID)));
     }
 
     @Override
@@ -37,6 +48,11 @@ public class RoomRepository extends CassandraRepository implements Repository<Ro
     @Override
     public void add(Room... elements) {
         Stream.of(elements).forEach(this::createRoom);
+    }
+
+    public void add(EquipmentType equipmentType, Room... elements) {
+        equipmentTypeDao.createEquipmentType(equipmentType);
+        this.add(elements);
     }
 
     @Override
@@ -60,10 +76,9 @@ public class RoomRepository extends CassandraRepository implements Repository<Ro
 
         PreparedStatement preparedStatement = session.prepare(getRoomsByRoomNumber.build());
 
-
         return session.execute(preparedStatement.bind(elements)).all()
                 .stream()
-                .map(element -> (Room) element)
+                .map(this::rowToEntity)
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +90,7 @@ public class RoomRepository extends CassandraRepository implements Repository<Ro
 
         return session.execute(getRooms.build()).all()
                 .stream()
-                .map(element -> (Room) element)
+                .map(this::rowToEntity)
                 .collect(Collectors.toList());
     }
 }

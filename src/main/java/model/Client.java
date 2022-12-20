@@ -6,17 +6,12 @@ import java.util.UUID;
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import model.clientType.ClientType;
 
 @Data
 @ToString
+@AllArgsConstructor
 @RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"firstName", "lastName", "clientType", "addressId"})

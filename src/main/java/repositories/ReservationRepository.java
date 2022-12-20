@@ -3,23 +3,36 @@ package repositories;
 import cassandra.CassandraNamespaces;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.relation.Relation;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import model.Reservation;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 
-public class ReservationRepository extends CassandraRepository
+public class ReservationRepository extends CassandraRepository<Reservation>
         implements Repository<Reservation> {
 
     public ReservationRepository(CqlSession session) {
         super(session);
+    }
+
+    @Override
+    protected Reservation rowToEntity(Row row) {
+        return new Reservation(
+                row.getUuid(CassandraNamespaces.RESERVATION_ID),
+                row.getInt(CassandraNamespaces.ROOM_NUMBER),
+                Objects.requireNonNull(row.getLocalDate(CassandraNamespaces.BEGIN_TIME)),
+                Objects.requireNonNull(row.getLocalDate(CassandraNamespaces.END_TIME)),
+                Objects.requireNonNull(row.getString(CassandraNamespaces.RES_CLIENT_ID)),
+                row.getDouble(CassandraNamespaces.RESERVATION_COST));
     }
 
     @Override
@@ -63,7 +76,7 @@ public class ReservationRepository extends CassandraRepository
 
         return session.execute(preparedStatement.bind(elements)).all()
                 .stream()
-                .map(element -> (Reservation) element)
+                .map(this::rowToEntity)
                 .collect(Collectors.toList());
     }
 
@@ -74,7 +87,7 @@ public class ReservationRepository extends CassandraRepository
                 .all();
         return session.execute(getReservations.build()).all()
                 .stream()
-                .map(element -> (Reservation) element)
+                .map(this::rowToEntity)
                 .collect(Collectors.toList());
     }
 }
