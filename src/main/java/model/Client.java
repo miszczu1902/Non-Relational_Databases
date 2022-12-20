@@ -14,7 +14,7 @@ import model.clientType.ClientType;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"firstName", "lastName", "clientType", "addressId"})
+@EqualsAndHashCode(exclude = {"firstName", "lastName", "clientType", "addressId", "discount"})
 @Entity(defaultKeyspace = "hotel")
 @CqlName("clients_id")
 public class Client implements Serializable {
@@ -34,7 +34,7 @@ public class Client implements Serializable {
     private String lastName;
 
     @NonNull
-    @CqlName("address_id")
+    @CqlName("addressId")
     private UUID addressId;
 
     @CqlName("clientType")

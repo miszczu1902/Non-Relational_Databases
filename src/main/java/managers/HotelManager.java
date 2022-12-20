@@ -1,12 +1,7 @@
 package managers;
 
-import com.datastax.oss.driver.api.core.CqlIdentifier;
+import cassandra.CassandraConnector;
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
-import com.datastax.oss.driver.api.core.type.DataTypes;
-import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
-import com.datastax.oss.driver.api.querybuilder.schema.CreateKeyspace;
 import exceptions.ClientException;
 import exceptions.LogicException;
 import exceptions.ReservationException;
@@ -16,14 +11,9 @@ import model.clientType.ClientType;
 import org.apache.commons.math3.util.Precision;
 import repositories.*;
 
-import java.net.InetSocketAddress;
 import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-
-import static cassandra.CassandraNamespaces.*;
-import static cassandra.CassandraNamespaces.RESERVATIONS_BY_CLIENT;
-import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createKeyspace;
 
 public class HotelManager {
 
@@ -33,81 +23,10 @@ public class HotelManager {
     private ReservationRepository reservationRepository;
 
     public HotelManager() {
-        initSession();
+        SESSION = CassandraConnector.initSession();
         this.clientRepository = new ClientRepository(SESSION);
         this.roomRepository = new RoomRepository(SESSION);
         this.reservationRepository = new ReservationRepository(SESSION);
-    }
-
-    public static void initSession() {
-        SESSION = CqlSession.builder()
-                .addContactPoint(new InetSocketAddress("localhost", 9042))
-                .addContactPoint(new InetSocketAddress("localhost", 9043))
-                .withLocalDatacenter("dc1")
-                .withAuthCredentials("cassandra", "cassandra")
-                .withKeyspace(CqlIdentifier.fromCql("hotel"))
-                .build();
-
-        CreateKeyspace keyspace = createKeyspace(HOTEL_NAMESPACE)
-                .ifNotExists()
-                .withSimpleStrategy(2)
-                .withDurableWrites(true);
-        SimpleStatement createKeyspace = keyspace.build();
-        SESSION.execute(createKeyspace);
-
-        SimpleStatement createAddresses = SchemaBuilder.createTable(ADDRESSES_ID)
-                .ifNotExists()
-                .withPartitionKey(ADDRESS_ID, DataTypes.UUID)
-                .withColumn(CITY, DataTypes.TEXT)
-                .withColumn(STREET, DataTypes.TEXT)
-                .withColumn(NUMBER, DataTypes.TEXT)
-                .build();
-        SESSION.execute(createAddresses);
-
-        SimpleStatement createClients = SchemaBuilder.createTable(CLIENT_ID)
-                .ifNotExists()
-                .withPartitionKey(PERSONAL_ID, DataTypes.TEXT)
-                .withColumn(FIRST_NAME, DataTypes.TEXT)
-                .withColumn(LAST_NAME, DataTypes.TEXT)
-                .withColumn(ADDRESS_ID, DataTypes.UUID)
-                .withColumn(CLIENT_TYPE, DataTypes.TEXT)
-                .withColumn(DISCOUNT, DataTypes.DOUBLE)
-                .build();
-        SESSION.execute(createClients);
-
-        SimpleStatement createRooms = SchemaBuilder.createTable(ROOMS_ID)
-                .ifNotExists()
-                .withPartitionKey(ROOM_NUMBER, DataTypes.INT)
-                .withColumn(CAPACITY, DataTypes.INT)
-                .withColumn(PRICE, DataTypes.DOUBLE)
-                .withClusteringColumn(EQUIPMENT_TYPE_ID, DataTypes.UUID)
-                .withClusteringOrder(EQUIPMENT_TYPE_ID, ClusteringOrder.ASC)
-                .build();
-        SESSION.execute(createRooms);
-
-        SimpleStatement createEquipmentTypes = SchemaBuilder.createTable(EQUIPMENT_TYPES)
-                .ifNotExists()
-                .withPartitionKey(EQ_ID, DataTypes.UUID)
-                .withColumn(EQ_DESCRIPTION, DataTypes.TEXT)
-                .withColumn(KETTLE, DataTypes.BOOLEAN)
-                .withColumn(MICROWAVE, DataTypes.BOOLEAN)
-                .withColumn(BALCONY, DataTypes.BOOLEAN)
-                .withColumn(TV, DataTypes.BOOLEAN)
-                .withColumn(AIR_CONDITIONING, DataTypes.BOOLEAN)
-                .build();
-        SESSION.execute(createEquipmentTypes);
-
-        SimpleStatement createReservations = SchemaBuilder.createTable(RESERVATIONS_BY_CLIENT)
-                .ifNotExists()
-                .withPartitionKey(RESERVATION_ID, DataTypes.UUID)
-                .withColumn(ROOM_NUMBER, DataTypes.INT)
-                .withColumn(BEGIN_TIME, DataTypes.DATE)
-                .withColumn(END_TIME, DataTypes.DATE)
-                .withColumn(RES_CLIENT_ID, DataTypes.TEXT)
-                .withColumn(RESERVATION_COST, DataTypes.DOUBLE)
-                .build();
-        SESSION.execute(createReservations);
-
     }
 
     public static void closeSession() {
@@ -120,6 +39,10 @@ public class HotelManager {
                         && (beginTime.isBefore(reservation.getEndTime())
                         || beginTime.equals(reservation.getEndTime())))
                 .toList()).isEmpty();
+    }
+
+    private int getRentDays(Reservation reservation) {
+        return reservation.getEndTime().getDayOfYear() - reservation.getBeginTime().getDayOfYear();
     }
 
     public void addClientToHotel(Client client) throws ClientException {
@@ -159,7 +82,7 @@ public class HotelManager {
             throw new RoomException("Room with a given number exist");
 
         } catch (NoSuchElementException e) {
-            roomRepository.add(new Room(roomNumber, capacity, price, equipmentType.getId()));
+            roomRepository.add(new Room(roomNumber, capacity, price, equipmentType.getEqId()));
         } catch (RoomException roomException) {
             throw new RoomException(roomException.getMessage());
         }
@@ -188,7 +111,7 @@ public class HotelManager {
     public void updateRoomEquipment(int roomNumber, EquipmentType equipment) {
         try {
             Room room = roomRepository.get(roomNumber);
-            room.setEquipmentTypeId(equipment.getId());
+            room.setEquipmentTypeId(equipment.getEqId());
             roomRepository.update(room);
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,7 +141,7 @@ public class HotelManager {
                 Reservation newReservation =
                         new Reservation(UUID.randomUUID(), roomNumber, beginTime, endTime, personalId, 0);
                 newReservation.setReservationCost(Precision.round(client.getDiscount()
-                        * (newReservation.getRentDays() * room.getPrice()), 2));
+                        * (getRentDays(newReservation) * room.getPrice()), 2));
 
                 if (newReservation.getReservationCost() >= 1000 && client.getClientType().equals(ClientType.STANDARD.getTypeInfo())) {
                     client.setClientType(ClientType.PREMIUM.getTypeInfo());

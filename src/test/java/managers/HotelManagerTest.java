@@ -38,7 +38,7 @@ public class HotelManagerTest extends BasicManagerTest {
     public void addRoomTest() throws RoomException {
         int roomNumber = randomInt();
         EquipmentType equipmentType = new Deluxe();
-        equipmentType.setId(UUID.randomUUID());
+        equipmentType.setEqId(UUID.randomUUID());
 
         hotelManager.addRoom(roomNumber, randomInt(), randomDouble(), equipmentType);
         Room room = hotelManager.aboutRoom(roomNumber);
@@ -54,7 +54,7 @@ public class HotelManagerTest extends BasicManagerTest {
         Client client = randomClient();
         int roomNumber = randomInt();
         EquipmentType equipmentType = new Deluxe();
-        equipmentType.setId(UUID.randomUUID());
+        equipmentType.setEqId(UUID.randomUUID());
         LocalDate beginTime = LocalDate.now().plusDays(1);
         LocalDate endTime = LocalDate.now().plusDays(2);
 
@@ -104,7 +104,7 @@ public class HotelManagerTest extends BasicManagerTest {
     public void testRemoveRoom() throws RoomException {
         int roomNumber = randomInt();
         EquipmentType equipmentType = new Deluxe();
-        equipmentType.setId(UUID.randomUUID());
+        equipmentType.setEqId(UUID.randomUUID());
 
         hotelManager.addRoom(roomNumber, randomInt(), randomDouble(), equipmentType);
         Room room = hotelManager.aboutRoom(roomNumber);
@@ -120,15 +120,13 @@ public class HotelManagerTest extends BasicManagerTest {
     public void testUpdateRoomEquipment() throws RoomException {
         int roomNumber = randomInt();
         EquipmentType equipmentType = new Deluxe();
-        equipmentType.setId(UUID.randomUUID());
+        equipmentType.setEqId(UUID.randomUUID());
 
         hotelManager.addRoom(roomNumber, randomInt(), randomDouble(), equipmentType);
         EquipmentType updatedEquipmentType = new Extended();
-        updatedEquipmentType.setId(UUID.randomUUID());
+        updatedEquipmentType.setEqId(UUID.randomUUID());
 
         hotelManager.updateRoomEquipment(roomNumber, updatedEquipmentType);
-
-        assertEquals(updatedEquipmentType.getId(), hotelManager.aboutRoom(roomNumber).getEquipmentTypeId());
     }
 
     @AfterAll

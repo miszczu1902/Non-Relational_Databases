@@ -40,8 +40,4 @@ public class Room implements Serializable {
     @CqlName("equipmentTypeId")
     @ClusteringColumn
     private UUID equipmentTypeId;
-
-    public Room(@NonNull Integer roomNumber) {
-        this.roomNumber = roomNumber;
-    }
 }

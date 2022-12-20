@@ -1,59 +1,61 @@
-//package repositories;
-//
-//import model.*;
-//import org.junit.jupiter.api.Test;
-//
-//import java.util.NoSuchElementException;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//public class RoomRepositoryTest extends BasicModelTest {
-//
-//    private RoomRepository repository = new RoomRepository();
-//    private Room room;
-//
-//    @Test
-//    public void testAdd() {
-//        room = randomRoom();
-//
-//        repository.add(room);
-//        repository.find(room).forEach(element -> assertEquals(element, room));
-//    }
-//
-//    @Test
-//    public void testGet() {
-//        room = randomRoom();
-//
-//        repository.add(room);
-//        assertEquals(room, repository.get(room));
-//    }
-//
-//    @Test
-//    public void testUpdate() {
-//        room = randomRoom();
-//
-//        repository.add(room);
-//
-//        Room newRoom = room;
-//        newRoom.setCapacity(randomInt());
-//
-//        repository.update(newRoom);
-//        assertEquals(newRoom, repository.get(newRoom));
-//    }
-//
-//    @Test
-//    public void testRemove() {
-//        room = randomRoom();
-//
-//        repository.add(room);
-//        repository.remove(room);
-//        assertThrows(NoSuchElementException.class, () -> repository.get(room));
-//    }
-//
-//    @Test
-//    public void testClear() {
-//        repository.clear();
-//
-//        assertEquals(0, repository.size());
-//    }
-//}
+package repositories;
+
+import cassandra.CassandraConnector;
+import com.datastax.oss.driver.api.core.CqlSession;
+import model.*;
+import model.equipmentType.Extended;
+import org.apache.commons.lang3.SerializationUtils;
+import org.junit.Before;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
+
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class RoomRepositoryTest extends BasicModelTest {
+
+    private static CqlSession session = CassandraConnector.initSession();
+    private RoomRepository repository = new RoomRepository(session);
+    private Room room;
+    private EquipmentType equipmentType;
+
+    @Before
+    public void initToTest() {
+        equipmentType = new Extended();
+        equipmentType.setEqId(UUID.randomUUID());
+        room = new Room(randomInt(), randomInt(), randomDouble(), equipmentType.getEqId());
+    }
+
+    @Test
+    public void testAddAndGet() {
+        repository.add(equipmentType, room);
+
+        assertEquals(room, repository.get(room.getRoomNumber()));
+    }
+
+    @Test
+    public void testUpdate() {
+        repository.add(equipmentType, room);
+
+        Room newRoom = SerializationUtils.clone(room);
+        newRoom.setCapacity(randomInt());
+
+        repository.update(newRoom);
+        assertEquals(newRoom, repository.get(newRoom.getRoomNumber()));
+    }
+
+    @Test
+    public void testRemove() {
+        repository.add(equipmentType, room);
+        repository.remove(room);
+
+        assertThrows(NoSuchElementException.class, () -> repository.get(room.getRoomNumber()));
+    }
+
+    @AfterAll
+    public static void closeSession() {
+        session.close();
+    }
+}

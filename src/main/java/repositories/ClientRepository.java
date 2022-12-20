@@ -36,7 +36,7 @@ public class ClientRepository extends CassandraRepository<Client> implements Rep
     @Override
     public Client get(Object element) {
         Select getClientByPersonalID = QueryBuilder
-                .selectFrom(CassandraNamespaces.CLIENT_ID)
+                .selectFrom(CassandraNamespaces.CLIENTS_ID)
                 .all()
                 .where(Relation.column("personalID").isEqualTo(literal(element.toString())));
         return Optional.ofNullable(readClient(session.execute(getClientByPersonalID.build())))
@@ -66,7 +66,7 @@ public class ClientRepository extends CassandraRepository<Client> implements Rep
     @Override
     public List<Client> find(Object... elements) {
         Select getClientsByPersonalID = QueryBuilder
-                .selectFrom(CassandraNamespaces.CLIENT_ID)
+                .selectFrom(CassandraNamespaces.CLIENTS_ID)
                 .all();
         Stream.of(elements).forEach(element ->
                 getClientsByPersonalID.where(Relation.column("personalID")
@@ -81,7 +81,7 @@ public class ClientRepository extends CassandraRepository<Client> implements Rep
     @Override
     public List<Client> getAll() {
         Select getClientsByPersonalID = QueryBuilder
-                .selectFrom(CassandraNamespaces.CLIENT_ID)
+                .selectFrom(CassandraNamespaces.CLIENTS_ID)
                 .all();
 
         return session.execute(getClientsByPersonalID.build()).all()

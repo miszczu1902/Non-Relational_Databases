@@ -8,7 +8,7 @@ import model.EquipmentType;
 
 import java.util.StringJoiner;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"microwave", "kettle"})
 @NoArgsConstructor
 @Entity(defaultKeyspace = "hotel")
 @CqlName("equipment_types")
@@ -29,7 +29,7 @@ public class Basic extends EquipmentType {
         return new StringJoiner(", ", Basic.class.getSimpleName() + "[", "]")
                 .add("microwave=" + microwave)
                 .add("kettle=" + kettle)
-                .add("id=" + id)
+                .add("id=" + eqId)
                 .add("equipmentDescription='" + equipmentDescription + "'")
                 .toString();
     }

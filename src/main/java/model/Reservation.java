@@ -42,8 +42,4 @@ public class Reservation implements Serializable {
 
     @CqlName("reservationCost")
     private double reservationCost;
-
-    public int getRentDays() {
-        return endTime.getDayOfYear() - beginTime.getDayOfYear();
-    }
 }

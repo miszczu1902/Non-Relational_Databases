@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.StringJoiner;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"tv", "balcony"})
 @NoArgsConstructor
 @Entity(defaultKeyspace = "hotel")
 @CqlName("equipment_types")
@@ -30,7 +30,7 @@ public class Extended extends Basic {
                 .add("balcony=" + balcony)
                 .add("microwave=" + microwave)
                 .add("kettle=" + kettle)
-                .add("id=" + id)
+                .add("id=" + eqId)
                 .add("equipmentDescription='" + equipmentDescription + "'")
                 .toString();
     }

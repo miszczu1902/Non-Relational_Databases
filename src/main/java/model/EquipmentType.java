@@ -11,14 +11,14 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = "id")
+@EqualsAndHashCode(exclude = "equipmentDescription")
 @Entity(defaultKeyspace = "hotel")
 @CqlName("equipment_types")
 public class EquipmentType implements Serializable {
 
-    @CqlName("eq_id")
+    @CqlName("eqId")
     @PartitionKey
-    protected UUID id;
+    protected UUID eqId;
 
     @CqlName("eq_description")
     protected String equipmentDescription;
@@ -29,7 +29,7 @@ public class EquipmentType implements Serializable {
 
     public String getActualEquipmentType() {
         return new StringJoiner(", ", EquipmentType.class.getSimpleName() + "[", "]")
-                .add("id=" + id)
+                .add("id=" + eqId)
                 .add("equipmentDescription='" + equipmentDescription + "'")
                 .toString();
     }

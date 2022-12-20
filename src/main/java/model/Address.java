@@ -22,8 +22,8 @@ public class Address implements Serializable {
 
     @NonNull
     @PartitionKey
-    @CqlName("address_id")
-    private UUID id;
+    @CqlName("addressId")
+    private UUID addressId;
 
     @NonNull
     @CqlName("city")
