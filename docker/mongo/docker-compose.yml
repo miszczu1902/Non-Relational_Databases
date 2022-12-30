@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   mongo:
-    build: ..
+    build: .
     image: mongocustom:1
     container_name: mongodb
     hostname: mongodb
@@ -20,7 +20,7 @@ services:
       retries: 5
 
   mongoinit:
-    build: ..
+    build: ../..
     image: mongocustom:1
     hostname: mongodbinit
     container_name: mongodbinit
