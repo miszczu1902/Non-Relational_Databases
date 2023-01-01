@@ -1,118 +1,187 @@
 {
   "type": "record",
+  "name": "Reservation",
   "namespace": "model",
-  "name": "ReservationAvro",
   "fields": [
     {
-      "name": "id",
-      "type": "string",
-      "logicalType": "uuid"
-    },
-    {
-      "name": "room",
-      "type": {
-        "type": "record",
-        "namespace": "model",
-        "name": "RoomAvro",
-        "fields": [
-          {
-            "name": "roomNumber",
-            "type": "int"
-          },
-          {
-            "name": "capacity",
-            "type": "int"
-          },
-          {
-            "name": "price",
-            "type": "double"
-          },
-          {
-            "name": "equipmentType",
-            "type": {
-              "type": "enum",
-              "name": "EquipmentTypeAvro",
-              "symbols": [
-                "BASIC",
-                "EXTENDED",
-                "DELUXE"
-              ]
-            }
-          }
-        ]
-      }
+      "name": "beginTime",
+      "type": [
+        "null",
+        "string"
+      ]
     },
     {
       "name": "client",
-      "type": {
-        "type": "record",
-        "namespace": "model",
-        "name": "ClientAvro",
-        "fields": [
-          {
-            "name": "personalID",
-            "type": "string"
-          },
-          {
-            "name": "firstName",
-            "type": "string"
-          },
-          {
-            "name": "lastName",
-            "type": "string"
-          },
-          {
-            "name": "address",
-            "type": {
-              "type": "record",
-              "namespace": "model",
-              "name": "AddressAvro",
-              "fields": [
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "Client",
+          "fields": [
+            {
+              "name": "address",
+              "type": [
+                "null",
                 {
-                  "name": "id",
-                  "type": "long"
-                },
-                {
-                  "name": "city",
-                  "type": "string"
-                },
-                {
-                  "name": "street",
-                  "type": "string"
-                },
-                {
-                  "name": "number",
-                  "type": "string"
+                  "type": "record",
+                  "name": "Address",
+                  "fields": [
+                    {
+                      "name": "city",
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    {
+                      "name": "id",
+                      "type": {
+                        "type": "long",
+                        "java-class": "java.lang.Long"
+                      }
+                    },
+                    {
+                      "name": "number",
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    {
+                      "name": "street",
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  ]
                 }
               ]
-            }
-          },
-          {
-            "name": "clientType",
-            "type": {
-              "type": "enum",
-              "name": "ClientTypeAvro",
-              "symbols": [
-                "STANDARD",
-                "PREMIUM"
+            },
+            {
+              "name": "clientType",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "ClientType",
+                  "symbols": [
+                    "STANDARD",
+                    "PREMIUM"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "firstName",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "name": "lastName",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "name": "personalID",
+              "type": [
+                "null",
+                "string"
               ]
             }
-          }
-        ]
-      }
-    },
-    {
-      "name": "beginTime",
-      "type": "long",
-      "logicalType": "local-timestamp-millis"
+          ]
+        }
+      ]
     },
     {
       "name": "endTime",
-      "type": "long"
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "id",
+      "type": {
+        "name": "id",
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "rentDays",
+      "type": {
+        "type": "int",
+        "java-class": "java.lang.Integer"
+      }
     },
     {
       "name": "reservationCost",
-      "type": "double"
+      "type": {
+        "type": "double",
+        "java-class": "java.lang.Double"
+      }
+    },
+    {
+      "name": "room",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "Room",
+          "fields": [
+            {
+              "name": "capacity",
+              "type": [
+                "null",
+                {
+                  "type": "int",
+                  "java-class": "java.lang.Integer"
+                }
+              ]
+            },
+            {
+              "name": "equipmentType",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "EquipmentType",
+                  "symbols": [
+                    "BASIC",
+                    "EXTENDED",
+                    "DELUXE"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "price",
+              "type": [
+                "null",
+                {
+                  "type": "double",
+                  "java-class": "java.lang.Double"
+                }
+              ]
+            },
+            {
+              "name": "roomNumber",
+              "type": [
+                "null",
+                {
+                  "type": "int",
+                  "java-class": "java.lang.Integer"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
