@@ -1,0 +1,117 @@
+{
+  "type": "record",
+  "namespace": "model",
+  "name": "Reservation",
+  "fields": [
+    {
+      "name": "_id",
+      "type": "string",
+      "logicalType": "uuid"
+    },
+    {
+      "name": "room",
+      "type": {
+        "type": "record",
+        "namespace": "model",
+        "name": "Room",
+        "fields": [
+          {
+            "name": "roomNumber",
+            "type": "int"
+          },
+          {
+            "name": "capacity",
+            "type": "int"
+          },
+          {
+            "name": "price",
+            "type": "double"
+          },
+          {
+            "name": "equipmentType",
+            "type": {
+              "type": "enum",
+              "name": "EquipmentType",
+              "symbols": [
+                "BASIC",
+                "EXTENDED",
+                "DELUXE"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "client",
+      "type": {
+        "type": "record",
+        "namespace": "model",
+        "name": "Client",
+        "fields": [
+          {
+            "name": "personalID",
+            "type": "long"
+          },
+          {
+            "name": "firstName",
+            "type": "string"
+          },
+          {
+            "name": "lastName",
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "type": {
+              "type": "record",
+              "namespace": "model",
+              "name": "Address",
+              "fields": [
+                {
+                  "name": "id",
+                  "type": "long"
+                },
+                {
+                  "name": "city",
+                  "type": "string"
+                },
+                {
+                  "name": "street",
+                  "type": "string"
+                },
+                {
+                  "name": "number",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "clientType",
+            "type": {
+              "type": "enum",
+              "name": "ClientType",
+              "symbols": [
+                "STANDARD",
+                "PREMIUM"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beginTime",
+      "type": "long"
+    },
+    {
+      "name": "endTime",
+      "type": "long"
+    },
+    {
+      "name": "reservationCost",
+      "type": "double"
+    }
+  ]
+}

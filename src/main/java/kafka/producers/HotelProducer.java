@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 public class HotelProducer {
 
-    public static KafkaProducer producer;
+    public static KafkaProducer PRODUCER;
 
     public static void initProducer() throws ExecutionException, InterruptedException {
         Properties producerConfig = new Properties();
@@ -23,6 +23,6 @@ public class HotelProducer {
                 "localhost:9192,localhost:9292,localhost:9392");
         producerConfig.put(ProducerConfig.ACKS_CONFIG, "all");
 //        producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-        producer = new KafkaProducer(producerConfig);
+        PRODUCER = new KafkaProducer(producerConfig);
     }
 }

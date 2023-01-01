@@ -8,6 +8,13 @@
     <artifactId>NBD_Project</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -41,16 +48,18 @@
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>schema</goal>
+<!--                            <goal>protocol</goal>-->
+<!--                            <goal>idl-protocol</goal>-->
                         </goals>
                         <configuration>
-                            <testSourceDirectory>${project.basedir}/src/test/avro/</testSourceDirectory>
-                            <testOutputDirectory>${project.build.directory}/generated-test-sources/avro</testOutputDirectory>
-                            <includes>
-                                <include>**/*.avro</include>
-                            </includes>
-                            <testIncludes>
-                                <testInclude>**/*.testavro</testInclude>
-                            </testIncludes>
+                            <sourceDirectory>${project.basedir}/src/main/resources/avro</sourceDirectory>
+<!--                            <testOutputDirectory>${project.build.directory}/generated-sources/avro</testOutputDirectory>-->
+<!--                            <includes>-->
+<!--                                <include>**/*.avro</include>-->
+<!--                            </includes>-->
+<!--                            <testIncludes>-->
+<!--                                <testInclude>**/*.testavro</testInclude>-->
+<!--                            </testIncludes>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -61,9 +70,9 @@
                 <version>3.3.0</version>
                 <executions>
                     <execution>
-                        <phase>generate-test-sources</phase>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>add-test-source</goal>
+                            <goal>add-source</goal>
                         </goals>
                         <configuration>
                             <sources>
@@ -162,9 +171,20 @@
             <version>3.3.1</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-avro</artifactId>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.11.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.fasterxml.jackson.dataformat</groupId>-->
+<!--            <artifactId>jackson-dataformat-avro</artifactId>-->
+<!--            <version>2.14.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <properties>
