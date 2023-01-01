@@ -20,7 +20,7 @@ public class ReservationRepositoryTest extends BasicModelTest {
     public void prepareDataToTest() {
         reservation = new Reservation(new UniqueIdMgd(),
                 new Room(randomInt(), randomInt(), randomDouble(), EquipmentType.BASIC),
-                LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2),
+                LocalDateTime.now().plusDays(1).toString(), LocalDateTime.now().plusDays(2).toString(),
                 new Client(randomString(), randomString(), randomString(),
                         new Address(randomInt(), randomString(), randomString(), randomString()),
                         ClientType.PREMIUM), randomDouble());
@@ -43,7 +43,7 @@ public class ReservationRepositoryTest extends BasicModelTest {
     public void testUpdate() {
         reservationRepository.add(reservation);
         Reservation newReservation = reservation;
-        newReservation.setEndTime(LocalDateTime.now().plusDays(2));
+        newReservation.setEndTime(LocalDateTime.now().plusDays(2).toString());
         reservationRepository.update(newReservation);
         assertEquals(newReservation, reservationRepository.get(newReservation));
     }

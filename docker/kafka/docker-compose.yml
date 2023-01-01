@@ -91,6 +91,24 @@ services:
     networks:
       - kafkanet
 
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.3.0
+    hostname: schema-registry
+    container_name: schema-registry
+    depends_on:
+      kafka1:
+        condition: service_started
+      kafka2:
+        condition: service_started
+      kafka3:
+        condition: service_started
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka1:19192,kafka2:19292,kafka3:19392'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
 volumes:
   kafka1_data:
     driver: local

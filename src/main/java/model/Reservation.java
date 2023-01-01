@@ -9,7 +9,6 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Data
 @ToString
@@ -20,14 +19,14 @@ public class Reservation extends AbstractEntity implements Serializable {
     @BsonCreator
     public Reservation(@BsonProperty("_id") UniqueIdMgd id,
                        @BsonProperty("room") Room room,
-                       @BsonProperty("beginTime") LocalDateTime beginTime,
-                       @BsonProperty("endTime") LocalDateTime endTime,
+                       @BsonProperty("beginTime") String beginTime,
+                       @BsonProperty("endTime") String endTime,
                        @BsonProperty("client") Client client,
                        @BsonProperty("reservationCost") double reservationCost) {
         super(id);
         this.room = room;
-        this.beginTime = beginTime.truncatedTo(ChronoUnit.MINUTES);
-        this.endTime = endTime.truncatedTo(ChronoUnit.MINUTES);
+        this.beginTime = beginTime;
+        this.endTime = endTime;
         this.client = client;
         this.reservationCost = reservationCost;
     }
@@ -40,11 +39,11 @@ public class Reservation extends AbstractEntity implements Serializable {
     private Room room;
 
     @BsonProperty("beginTime")
-    private LocalDateTime beginTime;
+    private String beginTime;
 
 
     @BsonProperty("endTime")
-    private LocalDateTime endTime;
+    private String endTime;
 
 
     @BsonProperty("client")
@@ -54,7 +53,7 @@ public class Reservation extends AbstractEntity implements Serializable {
     private double reservationCost;
 
     public int getRentDays() {
-        return endTime.getDayOfYear() - beginTime.getDayOfYear();
+        return LocalDateTime.parse(endTime).getDayOfYear() - LocalDateTime.parse(beginTime).getDayOfYear();
     }
 
     public void calculateReservationCost() {

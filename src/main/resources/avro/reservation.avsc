@@ -1,10 +1,10 @@
 {
   "type": "record",
   "namespace": "model",
-  "name": "Reservation",
+  "name": "ReservationAvro",
   "fields": [
     {
-      "name": "_id",
+      "name": "id",
       "type": "string",
       "logicalType": "uuid"
     },
@@ -13,7 +13,7 @@
       "type": {
         "type": "record",
         "namespace": "model",
-        "name": "Room",
+        "name": "RoomAvro",
         "fields": [
           {
             "name": "roomNumber",
@@ -31,7 +31,7 @@
             "name": "equipmentType",
             "type": {
               "type": "enum",
-              "name": "EquipmentType",
+              "name": "EquipmentTypeAvro",
               "symbols": [
                 "BASIC",
                 "EXTENDED",
@@ -47,11 +47,11 @@
       "type": {
         "type": "record",
         "namespace": "model",
-        "name": "Client",
+        "name": "ClientAvro",
         "fields": [
           {
             "name": "personalID",
-            "type": "long"
+            "type": "string"
           },
           {
             "name": "firstName",
@@ -66,7 +66,7 @@
             "type": {
               "type": "record",
               "namespace": "model",
-              "name": "Address",
+              "name": "AddressAvro",
               "fields": [
                 {
                   "name": "id",
@@ -91,7 +91,7 @@
             "name": "clientType",
             "type": {
               "type": "enum",
-              "name": "ClientType",
+              "name": "ClientTypeAvro",
               "symbols": [
                 "STANDARD",
                 "PREMIUM"
@@ -103,7 +103,8 @@
     },
     {
       "name": "beginTime",
-      "type": "long"
+      "type": "long",
+      "logicalType": "local-timestamp-millis"
     },
     {
       "name": "endTime",

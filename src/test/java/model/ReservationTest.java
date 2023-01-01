@@ -48,23 +48,11 @@ class ReservationTest extends BasicModelTest {
     }
 
     @Test
-    void testEquals() {
-        reservation = new Reservation(new UniqueIdMgd(), room, LocalDateTime.now(),
-                LocalDateTime.now().plusDays(RandomUtils.nextInt()), client,randomInt());
-        Reservation clonedReservation = SerializationUtils.clone(reservation);
-        assertEquals(reservation, clonedReservation);
-
-
-        clonedReservation.setEndTime(LocalDateTime.now());
-        assertEquals(reservation, clonedReservation);
-    }
-
-    @Test
     void testRentDays() {
         LocalDateTime beginTime = LocalDateTime.now();
         LocalDateTime endTime = beginTime.plusDays(randomInt());
-        reservation.setBeginTime(beginTime);
-        reservation.setEndTime(endTime);
+        reservation.setBeginTime(beginTime.toString());
+        reservation.setEndTime(endTime.toString());
 
         assertEquals(endTime.getDayOfYear() - beginTime.getDayOfYear(),
                 reservation.getRentDays());

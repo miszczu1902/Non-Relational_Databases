@@ -18,11 +18,14 @@ public class HotelManager {
     private RoomRepository roomRepository = new RoomRepository();
     private ReservationRepository reservationRepository = new ReservationRepository();
 
-    private boolean checkIfRoomCantBeReserved(int roomNumber, LocalDateTime beginTime) {
+    private boolean checkIfRoomCantBeReserved(int roomNumber, String beginTime) {
         return !(reservationRepository.getAll().stream()
-                .filter(reservation -> reservation.getRoom().getRoomNumber().equals(roomNumber) &&
-                        (beginTime.isBefore(reservation.getEndTime()) ||
-                                beginTime.equals(reservation.getEndTime())))
+                .filter(reservation -> {
+                    LocalDateTime endTime = LocalDateTime.parse(reservation.getEndTime());
+                    return reservation.getRoom().getRoomNumber().equals(roomNumber) &&
+                            (LocalDateTime.parse(beginTime).isBefore(endTime) ||
+                                    LocalDateTime.parse(beginTime).equals(endTime));
+                })
                 .toList()).isEmpty();
     }
 
@@ -79,7 +82,7 @@ public class HotelManager {
 
     public void removeRoom(Integer roomNumber) {
         try {
-            if (checkIfRoomCantBeReserved(roomNumber, LocalDateTime.now())) {
+            if (checkIfRoomCantBeReserved(roomNumber, LocalDateTime.now().toString())) {
                 throw new RoomException("A given room couldn't be removed because it's reserved");
             }
             Room room = roomRepository.get(new Room(roomNumber));
@@ -99,18 +102,19 @@ public class HotelManager {
         }
     }
 
-    public UUID reserveRoom(Integer roomNumber, LocalDateTime beginTime, LocalDateTime endTime,
+    public UUID reserveRoom(Integer roomNumber, String beginTime, String endTime,
                             String personalId) throws LogicException {
         try {
             roomRepository.get(new Room(roomNumber));
-
-            if (beginTime.isAfter(endTime) ||
-                    endTime.isBefore(beginTime)) {
+            LocalDateTime start = LocalDateTime.parse(beginTime);
+            LocalDateTime end = LocalDateTime.parse(endTime);
+            if (start.isAfter(end) ||
+                    start.isBefore(end)) {
                 throw new ReservationException(
                         "Start time of reservation should be before end time reservation");
 
-            } else if (beginTime.isBefore(LocalDateTime.now()) ||
-                    endTime.isBefore(LocalDateTime.now())) {
+            } else if (start.isBefore(LocalDateTime.now()) ||
+                    end.isBefore(LocalDateTime.now())) {
                 throw new ReservationException(
                         "Reservation cannot be before current date");
 
