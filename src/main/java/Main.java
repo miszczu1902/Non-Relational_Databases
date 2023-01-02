@@ -1,7 +1,6 @@
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.dataformat.avro.AvroMapper;
-import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import kafka.consumers.HotelConsumer;
 import kafka.producers.HotelProducer;
+import kafka.topics.Topics;
 import model.Client;
 import model.Reservation;
 import model.Room;
@@ -12,12 +11,12 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
-    public static void main(String[] args) throws ExecutionException, InterruptedException, JsonMappingException {
-//        AvroMapper avroMapper = new AvroMapper();
-//        AvroSchema schema = avroMapper.schemaFor(Reservation.class);
-//        System.out.println(schema.getAvroSchema());
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        Topics.createTopic();
 
         HotelProducer hotelProducer = new HotelProducer();
+        HotelConsumer hotelConsumer = new HotelConsumer();
+
         hotelProducer.send(new Reservation(
                 new UniqueIdMgd(UUID.randomUUID()),
                 new Room(),
@@ -25,6 +24,6 @@ public class Main {
                 LocalDateTime.now().plusDays(1).toString(),
                 new Client(),
                 0));
-
+        hotelConsumer.receiveReservation();
     }
 }

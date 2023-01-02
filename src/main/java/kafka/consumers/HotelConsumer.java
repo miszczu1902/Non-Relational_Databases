@@ -1,0 +1,49 @@
+package kafka.consumers;
+
+import kafka.topics.Topics;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.UUIDDeserializer;
+
+import java.text.MessageFormat;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+
+public class HotelConsumer {
+
+    private KafkaConsumer<UUID, String> consumer;
+
+    public HotelConsumer() {
+        Properties consumerConfig = new Properties();
+
+        consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class.getName());
+        consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, Topics.CONSUMER_GROUP_NAME);
+        consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9192,kafka2:9292,kafka3:9392");
+
+        this.consumer = new KafkaConsumer<>(consumerConfig);
+        this.consumer.subscribe(List.of(Topics.RESERVATION_TOPIC));
+    }
+
+    public void receiveReservation() {
+        Map<Integer, Long> offsets = new HashMap<>();
+
+        Duration timeout = Duration.of(100, ChronoUnit.MILLIS);
+        MessageFormat formatter = new MessageFormat("Temat {0}, partycja {1}, offset {2, number, integer}, klucz {3}, wartość {4}");
+
+        ConsumerRecords<UUID, String> records = consumer.poll(timeout);
+
+        for (ConsumerRecord<UUID, String> record : records) {
+            String result = formatter.format(new Object[]{record.topic(), record.partition(), record.offset(), record.key(), record.value()});
+            System.out.println(result);
+            offsets.put(record.partition(), record.offset());
+        }
+
+        System.out.println(offsets);
+        consumer.commitAsync();
+    }
+}
