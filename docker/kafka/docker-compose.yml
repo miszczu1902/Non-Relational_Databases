@@ -103,7 +103,7 @@ services:
       kafka3:
         condition: service_started
     ports:
-      - "8081:8081"
+      - "1111:8081"
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka1:19192,kafka2:19292,kafka3:19392'

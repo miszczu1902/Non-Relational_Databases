@@ -13,9 +13,9 @@ import java.util.concurrent.ExecutionException;
 
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException, JsonMappingException {
-        AvroMapper avroMapper = new AvroMapper();
-        AvroSchema schema = avroMapper.schemaFor(Reservation.class);
-        System.out.println(schema.getAvroSchema());
+//        AvroMapper avroMapper = new AvroMapper();
+//        AvroSchema schema = avroMapper.schemaFor(Reservation.class);
+//        System.out.println(schema.getAvroSchema());
 
         HotelProducer hotelProducer = new HotelProducer();
         hotelProducer.send(new Reservation(
