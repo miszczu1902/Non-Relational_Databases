@@ -36,7 +36,7 @@ public class KafkaCreateReservationsTest extends KafkaTests {
             try {
                 hotelProducer.send(reservation);
                 LOGGER.info("Reservation added: " + new JSONObject(reservation));
-                Thread.sleep(5000);
+                Thread.sleep(100);
             } catch (ExecutionException | InterruptedException e) {
                 LOGGER.warn(e.getMessage());
             }

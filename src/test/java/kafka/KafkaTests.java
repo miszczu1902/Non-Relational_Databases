@@ -34,6 +34,5 @@ public abstract class KafkaTests extends BasicManagerTest {
             HOTEL_MANAGER.reserveRoom(room.getRoomNumber(),
                     beginTime, endTime, client.getPersonalID());
         }
-
     }
 }
