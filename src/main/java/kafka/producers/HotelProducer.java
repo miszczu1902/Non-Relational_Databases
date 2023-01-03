@@ -40,10 +40,7 @@ public class HotelProducer {
         ProducerRecord<UUID, String> record = new ProducerRecord<>(RESERVATION_TOPIC,
                 reservation.getId().getUuid(), new JSONObject(reservation).toString());
 
-        producer.send(record, this::onCompletion);
-
-        producer.flush();
-        producer.close();
+        this.producer.send(record, this::onCompletion);
     }
 
     private void onCompletion(RecordMetadata data, Exception exception) {
@@ -52,5 +49,10 @@ public class HotelProducer {
         } else {
             System.out.println(exception);
         }
+    }
+
+    public void close() {
+        this.producer.flush();
+        this.producer.close();
     }
 }

@@ -1,8 +1,9 @@
 package kafka.consumers;
 
+import com.google.gson.Gson;
 import kafka.topics.Topics;
+import model.Reservation;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -29,21 +30,30 @@ public class HotelConsumer {
         this.consumer.subscribe(List.of(Topics.RESERVATION_TOPIC));
     }
 
-    public void receiveReservation() {
+    public List<Reservation> receiveReservation() {
         Map<Integer, Long> offsets = new HashMap<>();
+        List<Reservation> reservations = new ArrayList<>();
 
         Duration timeout = Duration.of(100, ChronoUnit.MILLIS);
         MessageFormat formatter = new MessageFormat("Temat {0}, partycja {1}, offset {2, number, integer}, klucz {3}, wartość {4}");
 
         ConsumerRecords<UUID, String> records = consumer.poll(timeout);
+        records.forEach(record -> {
 
-        for (ConsumerRecord<UUID, String> record : records) {
-            String result = formatter.format(new Object[]{record.topic(), record.partition(), record.offset(), record.key(), record.value()});
-            System.out.println(result);
-            offsets.put(record.partition(), record.offset());
-        }
+            reservations.add(new Gson().fromJson(record.value(), Reservation.class));
+//            offsets.put(record.partition(), record.offset());
+        });
 
-        System.out.println(offsets);
-        consumer.commitAsync();
+//        for (ConsumerRecord<UUID, String> record : records) {
+//            String result = formatter.format(new Object[]{record.topic(), record.partition(), record.offset(), record.key(), record.value()});
+//            System.out.println(result);
+//            offsets.put(record.partition(), record.offset());
+//        }
+//
+//        System.out.println(offsets);
+        this.consumer.commitAsync();
+        this.consumer.close();
+
+        return reservations;
     }
 }

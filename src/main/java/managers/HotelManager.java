@@ -8,7 +8,11 @@ import model.*;
 import mongo.UniqueIdMgd;
 import repositories.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -18,13 +22,13 @@ public class HotelManager {
     private RoomRepository roomRepository = new RoomRepository();
     private ReservationRepository reservationRepository = new ReservationRepository();
 
-    private boolean checkIfRoomCantBeReserved(int roomNumber, String beginTime) {
+    private boolean checkIfRoomCantBeReserved(int roomNumber, LocalDateTime beginTime) {
         return !(reservationRepository.getAll().stream()
                 .filter(reservation -> {
                     LocalDateTime endTime = LocalDateTime.parse(reservation.getEndTime());
                     return reservation.getRoom().getRoomNumber().equals(roomNumber) &&
-                            (LocalDateTime.parse(beginTime).isBefore(endTime) ||
-                                    LocalDateTime.parse(beginTime).equals(endTime));
+                            ((beginTime).isBefore(endTime) ||
+                                    beginTime.equals(endTime));
                 })
                 .toList()).isEmpty();
     }
@@ -82,7 +86,7 @@ public class HotelManager {
 
     public void removeRoom(Integer roomNumber) {
         try {
-            if (checkIfRoomCantBeReserved(roomNumber, LocalDateTime.now().toString())) {
+            if (checkIfRoomCantBeReserved(roomNumber, LocalDateTime.now())) {
                 throw new RoomException("A given room couldn't be removed because it's reserved");
             }
             Room room = roomRepository.get(new Room(roomNumber));
@@ -102,19 +106,15 @@ public class HotelManager {
         }
     }
 
-    public UUID reserveRoom(Integer roomNumber, String beginTime, String endTime,
+    public UUID reserveRoom(Integer roomNumber, LocalDateTime beginTime, LocalDateTime endTime,
                             String personalId) throws LogicException {
         try {
             roomRepository.get(new Room(roomNumber));
-            LocalDateTime start = LocalDateTime.parse(beginTime);
-            LocalDateTime end = LocalDateTime.parse(endTime);
-            if (start.isAfter(end) ||
-                    start.isBefore(end)) {
+            if (beginTime.isAfter(endTime) || endTime.isBefore(beginTime)) {
                 throw new ReservationException(
                         "Start time of reservation should be before end time reservation");
 
-            } else if (start.isBefore(LocalDateTime.now()) ||
-                    end.isBefore(LocalDateTime.now())) {
+            } else if (!beginTime.isAfter(LocalDateTime.now()) && !endTime.isAfter(LocalDateTime.now())) {
                 throw new ReservationException(
                         "Reservation cannot be before current date");
 
@@ -122,9 +122,9 @@ public class HotelManager {
                 throw new RoomException("Room is currently reserved");
 
             } else {
-                Reservation newReservation =
-                        new Reservation(new UniqueIdMgd(), roomRepository.get(new Room(roomNumber)), beginTime, endTime,
-                                clientRepository.get(new Client(personalId)), 0);
+                Reservation newReservation = new Reservation(new UniqueIdMgd(),
+                        roomRepository.get(new Room(roomNumber)), beginTime.toString(), endTime.toString(),
+                        clientRepository.get(new Client(personalId)), 0);
                 newReservation.calculateReservationCost();
 
                 if (newReservation.getReservationCost() >= 1000 &&

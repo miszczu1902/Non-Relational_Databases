@@ -11,7 +11,7 @@ import model.Room;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,8 +49,8 @@ public class HotelManagerTest extends BasicManagerTest {
     public void addReservationTest() throws LogicException {
         Client client = randomClient();
         Room room = randomRoom();
-        String beginTime = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MINUTES).toString();
-        String endTime = LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MINUTES).toString();
+        LocalDateTime beginTime = LocalDateTime.now();
+        LocalDateTime endTime = LocalDateTime.now().plusDays(2);
 
         hotelManager.addClientToHotel(client.getPersonalID());
         hotelManager.addRoom(room.getRoomNumber(), room.getCapacity(), room.getPrice(),
@@ -63,24 +63,24 @@ public class HotelManagerTest extends BasicManagerTest {
 
         assertEquals(client, addedReservation.getClient());
         assertEquals(room, addedReservation.getRoom());
-        assertEquals(beginTime, addedReservation.getBeginTime());
-        assertEquals(endTime, addedReservation.getEndTime());
+        assertEquals(beginTime.toString(), addedReservation.getBeginTime());
+        assertEquals(endTime.toString(), addedReservation.getEndTime());
 
         assertThrows(ReservationException.class,
                 () -> hotelManager.reserveRoom(room.getRoomNumber(),
-                        LocalDateTime.now().plusDays(1).toString(), LocalDateTime.now().plusDays(2).toString(),
+                        LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2),
                         client.getPersonalID()));
         assertThrows(ReservationException.class,
                 () -> hotelManager.reserveRoom(randomRoom().getRoomNumber(),
-                        LocalDateTime.now().plusDays(3).toString(), LocalDateTime.now().plusDays(2).toString(),
+                        LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(2),
                         client.getPersonalID()));
         assertThrows(ReservationException.class,
                 () -> hotelManager.reserveRoom(randomRoom().getRoomNumber(),
-                        LocalDateTime.now().minusDays(10).toString(), LocalDateTime.now().plusDays(2).toString(),
+                        LocalDateTime.now().minusDays(10), LocalDateTime.now().plusDays(2),
                         client.getPersonalID()));
         assertThrows(ReservationException.class,
                 () -> hotelManager.reserveRoom(randomRoom().getRoomNumber(),
-                        LocalDateTime.now().plusDays(10).toString(), LocalDateTime.now().minusDays(2).toString(),
+                        LocalDateTime.now().plusDays(10), LocalDateTime.now().minusDays(2),
                         client.getPersonalID()));
     }
 

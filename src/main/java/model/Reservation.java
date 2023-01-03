@@ -9,6 +9,7 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Data
 @ToString
