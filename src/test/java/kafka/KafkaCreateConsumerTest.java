@@ -19,12 +19,7 @@ public class KafkaCreateConsumerTest extends KafkaTests {
 
     @BeforeAll
     public static void prepareConsumerToTest() {
-        try {
-            hotelConsumer = new HotelConsumer();
-            addReservationsToHotel(500);
-        } catch (LogicException e) {
-            LOGGER.warn(e.getMessage());
-        }
+        hotelConsumer = new HotelConsumer();
     }
 
     @Test
