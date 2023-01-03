@@ -59,8 +59,10 @@ public class HotelConsumer {
             });
             consumer.commitAsync();
         }
-
-        consumer.close();
         return reservations;
+    }
+
+    public void close() {
+        this.consumer.close();
     }
 }
