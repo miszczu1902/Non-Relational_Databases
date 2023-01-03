@@ -1,5 +1,6 @@
 package kafka;
 
+import exceptions.LogicException;
 import kafka.producers.HotelProducer;
 import model.Reservation;
 import org.json.JSONObject;
@@ -15,14 +16,16 @@ public class KafkaCreateReservationsTest extends KafkaTests {
     protected static HotelProducer hotelProducer;
 
     @BeforeAll
-    public static void prepareProducerToTest() {
+    public static void prepareDataAndProducerToTest() {
         try {
             hotelProducer = new HotelProducer();
+            addReservationsToHotel(500);
         } catch (ExecutionException | InterruptedException e) {
             LOGGER.warn(e.getMessage());
             throw new RuntimeException(e);
+        } catch (LogicException e) {
+            LOGGER.warn(e.getMessage());
         }
-
     }
 
     @Test
@@ -44,33 +47,4 @@ public class KafkaCreateReservationsTest extends KafkaTests {
     public static void closeProducer() {
         hotelProducer.close();
     }
-
-    //    @Test
-//    public void createReservation() throws LogicException {
-//        Client client = randomClient();
-//        Room room = randomRoom();
-//        LocalDateTime beginTime = LocalDateTime.now();
-//        LocalDateTime endTime = LocalDateTime.now().plusDays(2);
-//
-//        HOTEL_MANAGER.addClientToHotel(client.getPersonalID());
-//        HOTEL_MANAGER.addRoom(room.getRoomNumber(), room.getCapacity(), room.getPrice(),
-//                room.getEquipmentType());
-//
-//        UUID reservationId = HOTEL_MANAGER.reserveRoom(room.getRoomNumber(),
-//                beginTime, endTime, client.getPersonalID());
-//
-//        Reservation reservation = HOTEL_MANAGER.aboutReservation(reservationId);
-//
-//        while (true) {
-//            try {
-//                hotelProducer.send(reservation);
-////                hotelProducer.close();
-//                LOGGER.info("Reservation added: " + jsonb.toJson(reservation));
-//                Thread.sleep(5000);
-//            } catch (ExecutionException | InterruptedException e) {
-//                LOGGER.warn(e.getMessage());
-//
-//            }
-//        }
-//    }
 }

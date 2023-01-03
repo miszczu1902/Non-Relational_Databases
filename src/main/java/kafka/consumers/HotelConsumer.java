@@ -5,10 +5,8 @@ import jakarta.json.bind.JsonbBuilder;
 import kafka.topics.Topics;
 import model.Reservation;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.UUIDDeserializer;
 
@@ -34,25 +32,35 @@ public class HotelConsumer {
         this.consumer.subscribe(List.of(Topics.RESERVATION_TOPIC));
     }
 
-    public List<Reservation> receiveReservation() {
-        Map<Integer, Long> offsets = new HashMap<>();
+    public List<Reservation> receiveReservations() {
         List<Reservation> reservations = new ArrayList<>();
+        int noRecordsCount = 0;
 
-        Duration timeout = Duration.of(100, ChronoUnit.MILLIS);
+        Duration timeout = Duration.of(1000, ChronoUnit.MILLIS);
         MessageFormat formatter = new MessageFormat(
                 "Temat {0}, partycja {1}, offset {2, number, integer}, klucz {3}, wartość {4}");
 
-        ConsumerRecords<UUID, String> records = consumer.poll(timeout);
-        for (ConsumerRecord<UUID, String> record : records) {
-            String result = formatter.format(new Object[]{record.topic(), record.partition(), record.offset(), record.key(), record.value()});
-            System.out.println(result);
-            reservations.add(jsonb.fromJson(record.value(), Reservation.class));
-//            offsets.put(record.partition(), record.offset());
+        while (true) {
+            ConsumerRecords<UUID, String> consumerRecords = consumer.poll(timeout);
+            if (consumerRecords.count() == 0) {
+                noRecordsCount++;
+                if (noRecordsCount > timeout.getSeconds()) {
+                    break;
+                } else {
+                    continue;
+                }
+            }
+
+            consumerRecords.forEach(record -> {
+                String result = formatter.format(new Object[]{record.topic(), record.partition(),
+                        record.offset(), record.key(), record.value()});
+                System.out.println(result);
+                reservations.add(jsonb.fromJson(record.value(), Reservation.class));
+            });
+            consumer.commitAsync();
         }
-//
-//        System.out.println(offsets);
-//        this.consumer.commitAsync();
-        this.consumer.close();
+
+        consumer.close();
         return reservations;
     }
 }

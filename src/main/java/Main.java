@@ -28,7 +28,8 @@ public class Main {
                 new Client(),
                 0));
 
-        hotelConsumer.receiveReservation();
+        hotelConsumer.receiveReservations();
+        hotelProducer.close();
     }
 
 }
