@@ -2,7 +2,10 @@ package kafka.topics;
 
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.errors.TopicExistsException;
+import org.apache.kafka.common.internals.Topic;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -27,10 +30,12 @@ public class Topics {
                     .retryOnQuotaViolation(true);
             CreateTopicsResult result = admin.createTopics(List.of(newTopic), options);
             KafkaFuture<Void> futureResult = result.values().get(Topics.RESERVATION_TOPIC);
-
             futureResult.get();
-        } catch (ExecutionException ee) {
-            return;
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new TopicExistsException(e.getMessage());
         }
+
     }
 }

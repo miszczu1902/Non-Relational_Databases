@@ -1,5 +1,7 @@
 package kafka.producers;
 
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import model.Reservation;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -19,6 +21,7 @@ import static kafka.topics.Topics.RESERVATION_TOPIC;
 public class HotelProducer {
 
     private KafkaProducer<UUID, String> producer;
+    private Jsonb jsonb = JsonbBuilder.create();
 
     public HotelProducer() throws ExecutionException, InterruptedException {
         Properties producerConfig = new Properties();
@@ -28,19 +31,21 @@ public class HotelProducer {
         producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class.getName());
         producerConfig.put(ProducerConfig.CLIENT_ID_CONFIG, "local");
+//        producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+//                "kafka1:9192,kafka2:9292,kafka3:9392");
         producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                "kafka1:9192,kafka2:9292,kafka3:9392");
+                "kafka1:9192");
+        producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         producerConfig.put(ProducerConfig.ACKS_CONFIG, "all");
-//        producerConfig.put("schema.registry.url", "http://localhost:1111");
-//        producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         this.producer = new KafkaProducer<>(producerConfig);
     }
 
     public void send(Reservation reservation) throws ExecutionException, InterruptedException {
         ProducerRecord<UUID, String> record = new ProducerRecord<>(RESERVATION_TOPIC,
-                reservation.getId().getUuid(), new JSONObject(reservation).toString());
+                reservation.getId().getUuid(), jsonb.toJson(reservation));
 
         this.producer.send(record, this::onCompletion);
+        System.out.println(new JSONObject(reservation));
     }
 
     private void onCompletion(RecordMetadata data, Exception exception) {

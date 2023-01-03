@@ -1,6 +1,5 @@
 import kafka.consumers.HotelConsumer;
 import kafka.producers.HotelProducer;
-import kafka.topics.Topics;
 import lombok.extern.slf4j.Slf4j;
 import model.Client;
 import model.Reservation;
@@ -16,10 +15,10 @@ import java.util.concurrent.ExecutionException;
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
-        Topics.createTopic();
-
-        HotelProducer hotelProducer = new HotelProducer();
+//        Topics.createTopic();
+//        LOGGER.info("Topic = '" + Topics.RESERVATION_TOPIC + "' created");
         HotelConsumer hotelConsumer = new HotelConsumer();
+        HotelProducer hotelProducer = new HotelProducer();
 
         hotelProducer.send(new Reservation(
                 new UniqueIdMgd(UUID.randomUUID()),
@@ -28,10 +27,8 @@ public class Main {
                 LocalDateTime.now().plusDays(1).toString(),
                 new Client(),
                 0));
-        hotelConsumer.receiveReservation().forEach(reservation -> {
-            System.out.println(reservation.toString());
-                    LOGGER.info(reservation.toString());
-                }
-        );
+
+        hotelConsumer.receiveReservation();
     }
+
 }

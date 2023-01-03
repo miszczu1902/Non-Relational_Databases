@@ -29,7 +29,8 @@ services:
     volumes:
       - kafka1_data:/bitnami/kafka
     networks:
-      - kafkanet
+      kafkanet:
+        ipv4_address: 172.25.0.3
 
   kafka2:
     image: docker.io/bitnami/kafka:3.3
@@ -59,7 +60,8 @@ services:
     volumes:
       - kafka2_data:/bitnami/kafka
     networks:
-      - kafkanet
+      kafkanet:
+        ipv4_address: 172.25.0.2
 
   kafka3:
     image: docker.io/bitnami/kafka:3.3
@@ -89,7 +91,8 @@ services:
     volumes:
       - kafka3_data:/bitnami/kafka
     networks:
-      - kafkanet
+      kafkanet:
+        ipv4_address: 172.25.0.4
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
