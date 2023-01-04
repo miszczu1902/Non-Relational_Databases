@@ -19,7 +19,6 @@ public class KafkaCreateConsumerTest extends KafkaTests {
     public void getReservationFromProducer() throws InterruptedException {
         while (true) {
             hotelConsumer.receiveReservations();
-            Thread.sleep(1000);
         }
     }
 

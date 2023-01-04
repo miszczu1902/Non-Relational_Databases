@@ -20,7 +20,6 @@ import java.util.*;
 public class HotelConsumer {
 
     private KafkaConsumer<UUID, String> consumer;
-    private Jsonb jsonb = JsonbBuilder.create();
     private ReservationRepository reservationRepository = new ReservationRepository();
 
 
@@ -37,10 +36,9 @@ public class HotelConsumer {
     }
 
     public void receiveReservations() {
-        List<Reservation> reservations = new ArrayList<>();
         int noRecordsCount = 0;
 
-        Duration timeout = Duration.of(1000, ChronoUnit.MILLIS);
+        Duration timeout = Duration.of(4500, ChronoUnit.MILLIS);
         MessageFormat formatter = new MessageFormat(
                 "Temat {0}, partycja {1}, offset {2, number, integer}, klucz {3}, wartość {4}");
 
