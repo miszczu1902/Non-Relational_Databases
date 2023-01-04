@@ -17,7 +17,7 @@ public class KafkaCreateReservationsTest extends KafkaTests {
     public static void prepareDataAndProducerToTest() {
         try {
             hotelProducer = new HotelProducer();
-            addReservationsToHotel(500);
+            addReservationsToHotel(1000);
         } catch (ExecutionException | InterruptedException e) {
             LOGGER.warn(e.getMessage());
             throw new RuntimeException(e);
@@ -32,7 +32,7 @@ public class KafkaCreateReservationsTest extends KafkaTests {
             try {
                 hotelProducer.send(reservation);
                 LOGGER.info("Reservation added: " + new JSONObject(reservation));
-                Thread.sleep(100);
+                Thread.sleep(2500);
             } catch (ExecutionException | InterruptedException e) {
                 LOGGER.warn(e.getMessage());
             }
