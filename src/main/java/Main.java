@@ -1,4 +1,3 @@
-import kafka.consumers.HotelConsumer;
 import kafka.producers.HotelProducer;
 import lombok.extern.slf4j.Slf4j;
 import model.Client;
@@ -14,22 +13,22 @@ import java.util.concurrent.ExecutionException;
 
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
-//        Topics.createTopic();
-//        LOGGER.info("Topic = '" + Topics.RESERVATION_TOPIC + "' created");
-        HotelConsumer hotelConsumer = new HotelConsumer();
-        HotelProducer hotelProducer = new HotelProducer();
-
-        hotelProducer.send(new Reservation(
-                new UniqueIdMgd(UUID.randomUUID()),
-                new Room(),
-                LocalDateTime.now().toString(),
-                LocalDateTime.now().plusDays(1).toString(),
-                new Client(),
-                0));
-
-        hotelConsumer.receiveReservations();
-        hotelProducer.close();
+//        Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
+////        Topics.createTopic();
+////        LOGGER.info("Topic = '" + Topics.RESERVATION_TOPIC + "' created");
+//        HotelConsumer hotelConsumer = new HotelConsumer();
+//        HotelProducer hotelProducer = new HotelProducer();
+//
+//        hotelProducer.send(new Reservation(
+//                new UniqueIdMgd(UUID.randomUUID()),
+//                new Room(),
+//                LocalDateTime.now().toString(),
+//                LocalDateTime.now().plusDays(1).toString(),
+//                new Client(),
+//                0));
+//
+//        hotelConsumer.receiveReservations();
+//        hotelProducer.close();
     }
 
 }
