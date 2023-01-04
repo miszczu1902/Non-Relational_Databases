@@ -1,5 +1,6 @@
 package kafka.consumers;
 
+import com.google.gson.Gson;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import kafka.topics.Topics;
@@ -9,6 +10,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.UUIDDeserializer;
+import repositories.ReservationRepository;
 
 import java.text.MessageFormat;
 import java.time.Duration;
@@ -19,6 +21,8 @@ public class HotelConsumer {
 
     private KafkaConsumer<UUID, String> consumer;
     private Jsonb jsonb = JsonbBuilder.create();
+    private ReservationRepository reservationRepository = new ReservationRepository();
+
 
     public HotelConsumer() {
         Properties consumerConfig = new Properties();
@@ -32,7 +36,7 @@ public class HotelConsumer {
         this.consumer.subscribe(List.of(Topics.RESERVATION_TOPIC));
     }
 
-    public List<Reservation> receiveReservations() {
+    public void receiveReservations() {
         List<Reservation> reservations = new ArrayList<>();
         int noRecordsCount = 0;
 
@@ -55,11 +59,10 @@ public class HotelConsumer {
                 String result = formatter.format(new Object[]{record.topic(), record.partition(),
                         record.offset(), record.key(), record.value()});
                 System.out.println(result);
-                reservations.add(jsonb.fromJson(record.value(), Reservation.class));
+                reservationRepository.add(new Gson().fromJson(record.value(), Reservation.class));
             });
             consumer.commitAsync();
         }
-        return reservations;
     }
 
     public void close() {

@@ -1,5 +1,4 @@
 import kafka.consumers.HotelConsumer;
-import kafka.producers.HotelProducer;
 import lombok.extern.slf4j.Slf4j;
 import model.Client;
 import model.Reservation;
